@@ -17,11 +17,6 @@ kotlin {
 
     jvm()
 
-    js {
-        browser()
-        binaries.executable()
-    }
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -33,6 +28,7 @@ kotlin {
         }
     }
 
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(mapOf("path" to ":core:common")))
@@ -43,7 +39,6 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.multiplatformSettings)
             implementation(libs.koin.core)
-            implementation(libs.kstore)
         }
 
         commonTest.dependencies {
@@ -55,10 +50,6 @@ kotlin {
         }
 
         jvmMain.dependencies {
-        }
-
-        jsMain.dependencies {
-
         }
 
         iosMain.dependencies {

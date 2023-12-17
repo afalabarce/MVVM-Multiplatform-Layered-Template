@@ -1,6 +1,6 @@
 import UIKit
 import SwiftUI
-import ComposeApp
+import presentationUi
 
 @main
 struct iosApp: App {

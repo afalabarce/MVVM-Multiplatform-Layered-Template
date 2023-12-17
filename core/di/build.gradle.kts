@@ -17,11 +17,6 @@ kotlin {
 
     jvm()
 
-    js {
-        browser()
-        binaries.executable()
-    }
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -35,6 +30,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(mapOf("path" to ":core:common")))
+            implementation(project(mapOf("path" to ":data:datasources-core")))
+            implementation(project(mapOf("path" to ":data:repository")))
+            implementation(project(mapOf("path" to ":domain:usecases")))
+            implementation(project(mapOf("path" to ":presentation:viewmodels")))
             implementation(libs.napier)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
@@ -48,10 +48,6 @@ kotlin {
         }
 
         jvmMain.dependencies {
-        }
-
-        jsMain.dependencies {
-
         }
 
         iosMain.dependencies {

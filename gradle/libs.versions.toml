@@ -4,8 +4,8 @@ kotlin = "1.9.21"
 agp = "8.2.0"
 compose = "1.5.11"
 androidx-appcompat = "1.6.1"
-androidx-activityCompose = "1.7.2"
-compose-uitooling = "1.5.1"
+androidx-activityCompose = "1.8.2"
+compose-uitooling = "1.5.4"
 libres = "1.2.1"
 voyager = "1.0.0-rc10"
 composeImageLoader = "1.7.1"
@@ -13,7 +13,6 @@ napier = "2.6.1"
 buildConfig = "4.1.1"
 kotlinx-coroutines = "1.7.3"
 moko-mvvm = "0.16.1"
-ktor = "2.3.6"
 composeIcons = "1.1.0"
 kotlinx-serialization = "1.6.1"
 kotlinx-datetime = "0.4.1"
@@ -21,6 +20,9 @@ multiplatformSettings = "1.1.1"
 koin = "3.5.0"
 kstore = "0.6.0"
 sqlDelight = "2.0.0"
+ksp-version = "1.9.21-1.0.15"
+ktorVersion = "2.3.6"
+ktorfit-version = "1.11.0"
 
 [libraries]
 
@@ -34,9 +36,6 @@ napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 moko-mvvm = { module = "dev.icerock.moko:mvvm-compose", version.ref = "moko-mvvm" }
-ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 composeIcons-featherIcons = { module = "br.com.devsrsouza.compose.icons:feather", version.ref = "composeIcons" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
@@ -46,10 +45,29 @@ kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
 sqlDelight-driver-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
 sqlDelight-driver-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqlDelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
-sqlDelight-driver-js = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqlDelight" }
+com-google-ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp-version" }
+
+#Ktor
+
+ktor-client-cio-jvm = { module = "io.ktor:ktor-client-cio-jvm", version.ref = "ktorVersion" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorVersion" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorVersion" }
+ktor-client-core-jvm = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktorVersion" }
+ktor-client-curl = { module = "io.ktor:ktor-client-curl", version.ref = "ktorVersion" }
+ktor-client-ios = { module = "io.ktor:ktor-client-ios", version.ref = "ktorVersion" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorVersion" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktorVersion" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorVersion" }
+ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktorVersion" }
+ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktorVersion" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
+ktorfit-ksp = { module = "de.jensklingenberg.ktorfit:ktorfit-ksp", version.ref = "ktorfit-version" }
+ktorfit-lib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit-version" }
+
+[bundles]
+
 
 [plugins]
-
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -58,3 +76,5 @@ libres = { id = "io.github.skeptick.libres", version.ref = "libres" }
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 sqlDelight = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }
+com-google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-version" }
+ktorfit = { id ="de.jensklingenberg.ktorfit", version.ref = "ktorfit-version" }

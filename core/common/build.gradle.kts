@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.libres)
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlinx.serialization)
 }
@@ -16,11 +15,6 @@ kotlin {
     }
 
     jvm()
-
-    js {
-        browser()
-        binaries.executable()
-    }
 
     listOf(
         iosX64(),
@@ -42,7 +36,6 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.multiplatformSettings)
             implementation(libs.koin.core)
-            implementation(libs.kstore)
         }
 
         commonTest.dependencies {
@@ -54,10 +47,6 @@ kotlin {
         }
 
         jvmMain.dependencies {
-        }
-
-        jsMain.dependencies {
-
         }
 
         iosMain.dependencies {

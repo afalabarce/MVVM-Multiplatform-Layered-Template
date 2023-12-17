@@ -1,15 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-include(":core:di")
-
-
-include(":core:common")
-
-
-include(":core:viewmodels")
-
-
-rootProject.name = "MVVM-Multiplatform-Template"
+rootProject.name = "MVVM-Multiplatform-Layered-Template"
 
 pluginManagement {
     repositories {
@@ -28,8 +19,16 @@ dependencyResolutionManagement {
     }
 }
 
-include(":composeApp")
+include(":presentation:ui")
+include(":presentation:viewmodels")
 include(":core:ui")
 include(":core:common")
 include(":core:di")
 include(":core:viewmodels")
+include(":domain:usecases")
+include(":domain:repository")
+include(":domain:models")
+include(":data:datasources-core")
+include(":data:repository")
+include(":data:datasources")
+include(":data:models")
