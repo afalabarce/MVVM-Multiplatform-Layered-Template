@@ -312,7 +312,7 @@
 				OTHER_LDFLAGS = (
 					"${inherited}",
 					"-framework",
-					presentation.ui,
+					presentationUi,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.afalabarce.mvvmkmmtemplate.iosApp;
 				PRODUCT_NAME = "MVVM Multiplatform Template";
@@ -349,7 +349,7 @@
 				OTHER_LDFLAGS = (
 					"${inherited}",
 					"-framework",
-					presentation.ui,
+					presentationUi,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.afalabarce.mvvmkmmtemplate.iosApp;
 				PRODUCT_NAME = "MVVM Multiplatform Template";
