@@ -49,6 +49,7 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.koin.core.android)
         }
 
         jvmMain.dependencies {

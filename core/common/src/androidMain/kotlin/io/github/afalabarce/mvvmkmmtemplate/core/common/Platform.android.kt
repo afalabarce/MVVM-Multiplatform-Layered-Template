@@ -8,7 +8,7 @@ class AndroidPlatform : Platform {
     override val name: String = "Android ${android.os.Build.VERSION.SDK_INT}"
 }
 
-class AndroidApp : Application() {
+open class AndroidApp : Application() {
     companion object {
         lateinit var INSTANCE: AndroidApp
     }

@@ -52,6 +52,7 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.multiplatformSettings)
             implementation(libs.koin.core)
+            implementation(libs.koin.compose)
         }
 
         commonTest.dependencies {
@@ -63,6 +64,7 @@ kotlin {
             implementation(libs.androidx.activityCompose)
             implementation(libs.compose.uitooling)
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.koin.core.android)
         }
 
         jvmMain.dependencies {
