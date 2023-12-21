@@ -35,17 +35,11 @@ kotlin {
             implementation(project(mapOf("path" to ":data:repository")))
             implementation(project(mapOf("path" to ":domain:usecases")))
             implementation(project(mapOf("path" to ":presentation:viewmodels")))
-            implementation(libs.napier)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.multiplatformSettings)
-            implementation(libs.koin.core)
+            implementation(libs.bundles.layer.core.common)
         }
 
         androidMain.dependencies {
-            implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.koin.core.android)
+            implementation(libs.bundles.android.core)
         }
 
         jvmMain.dependencies {

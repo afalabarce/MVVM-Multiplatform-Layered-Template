@@ -41,18 +41,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
-            implementation(libs.libres)
-            implementation(libs.voyager.navigator)
-            implementation(libs.composeImageLoader)
-            implementation(libs.napier)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.moko.mvvm)
-            implementation(libs.composeIcons.featherIcons)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.multiplatformSettings)
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
+            implementation(libs.bundles.layer.core.ui)
         }
 
         commonTest.dependencies {
@@ -60,11 +49,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.androidx.appcompat)
-            implementation(libs.androidx.activityCompose)
-            implementation(libs.compose.uitooling)
-            implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.koin.core.android)
+            implementation(libs.bundles.android.core.ui)
         }
 
         jvmMain.dependencies {

@@ -1,5 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.android.library)
@@ -36,19 +34,7 @@ kotlin {
             implementation(project(mapOf("path" to ":core:common")))
             implementation(project(mapOf("path" to ":data:models")))
             implementation(project(mapOf("path" to ":data:datasources")))
-            implementation(libs.napier)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.multiplatformSettings)
-            implementation(libs.koin.core)
-            implementation(libs.kstore)
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.client.logging)
-            implementation(libs.ktor.client.serialization)
-            //implementation(libs.ktor.serialization.gson)
-            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.bundles.layer.data.datasources.core)
         }
 
         commonTest.dependencies {
@@ -56,22 +42,15 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.ktor.client.okhttp)
-            implementation(libs.sqlDelight.driver.android)
-            implementation(libs.koin.core.android)
+            implementation(libs.bundles.android.data.core)
         }
 
         jvmMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
-            implementation(libs.ktor.client.core.jvm)
-            implementation(libs.ktor.client.cio.jvm)
-            implementation(libs.sqlDelight.driver.sqlite)
+            implementation(libs.bundles.jvm.data.core)
         }
 
         iosMain.dependencies {
-            implementation(libs.ktor.client.ios)
-            implementation(libs.sqlDelight.driver.native)
+            implementation(libs.bundles.ios.data.core)
         }
 
     }

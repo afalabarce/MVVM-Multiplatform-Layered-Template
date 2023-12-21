@@ -29,13 +29,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.napier)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.moko.mvvm)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.multiplatformSettings)
-            implementation(libs.koin.core)
+            implementation(libs.bundles.layer.core.common)
         }
 
         commonTest.dependencies {
@@ -43,8 +37,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.koin.core.android)
+            implementation(libs.bundles.android.core)
 
         }
 

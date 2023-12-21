@@ -35,12 +35,7 @@ kotlin {
             implementation(project(mapOf("path" to ":domain:models")))
             implementation(project(mapOf("path" to ":data:models")))
             implementation(project(mapOf("path" to ":data:datasources")))
-            implementation(libs.napier)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.multiplatformSettings)
-            implementation(libs.koin.core)
+            implementation(libs.bundles.layer.core.common)
         }
 
         commonTest.dependencies {
@@ -48,8 +43,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.koin.core.android)
+            implementation(libs.bundles.android.core)
         }
 
         jvmMain.dependencies {
