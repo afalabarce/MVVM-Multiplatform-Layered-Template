@@ -89,7 +89,7 @@ sqldelight {
         create(BuildVersion.environment.appDatabaseName) {
             // Database configuration here.
             // https://cashapp.github.io/sqldelight
-            packageName.set("${BuildVersion.environment.applicationId}.db")
+            packageName.set("${BuildVersion.environment.applicationId}.data.datasources.core.db")
         }
     }
 }
