@@ -24,7 +24,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "data.datasources.core"
+            baseName = "dataDatasourcesCore"
             isStatic = true
         }
     }

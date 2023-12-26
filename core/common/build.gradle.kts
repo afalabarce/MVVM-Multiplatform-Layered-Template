@@ -22,7 +22,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "core.common"
+            baseName = "coreCommon"
             isStatic = true
         }
     }

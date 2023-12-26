@@ -10,12 +10,12 @@ object Database {
     val databaseName = "KmmDatabase"
 }
 
-/*
-fun createDatabase(driverFactory: DriverFactory): Database {
+
+fun createDatabase(driverFactory: DriverFactory): KmmDatabase {
     val driver = driverFactory.createDriver()
-    val database = Database(driver)
+    val database = KmmDatabase(driver)
 
     // Do more work with the database (see below).
+    return database
 }
 
- */
