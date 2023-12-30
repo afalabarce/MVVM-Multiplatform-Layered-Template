@@ -3,9 +3,9 @@ package io.github.afalabarce.mvvmkmmtemplate.data.datasources.core
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class DataSourceCoreExampleTest {
+actual class DataSourceCoreExampleTest {
     @Test
-    fun testExample() {
+    actual fun testExample() {
         assertTrue(true, "Check JVM is mentioned")
     }
 }

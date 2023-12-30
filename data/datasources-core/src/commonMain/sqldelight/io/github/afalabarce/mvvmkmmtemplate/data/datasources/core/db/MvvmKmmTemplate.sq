@@ -11,6 +11,12 @@ insertItem:
 INSERT INTO table_example(title,description)
 VALUES (?, ?);
 
+updateItem:
+    UPDATE table_example SET title = ?, description = ? WHERE id = ?;
+
 deleteById:
 DELETE FROM table_example WHERE id = ?;
+
+deleteAll:
+DELETE FROM table_example;
 

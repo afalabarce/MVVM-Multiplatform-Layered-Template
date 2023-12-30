@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.sqlDelight)
+    alias(libs.plugins.com.google.ksp)
+    alias(libs.plugins.ktorfit)
 }
 
 kotlin {
@@ -29,11 +31,21 @@ kotlin {
         }
     }
 
+    dependencies {
+        add("kspCommonMainMetadata", libs.ktorfit.ksp)
+        add("kspAndroid", libs.ktorfit.ksp)
+        add("kspIosArm64", libs.ktorfit.ksp)
+        add("kspIosX64", libs.ktorfit.ksp)
+        add("kspIosSimulatorArm64", libs.ktorfit.ksp)
+        add("kspJvm", libs.ktorfit.ksp)
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(mapOf("path" to ":core:common")))
             implementation(project(mapOf("path" to ":data:models")))
             implementation(project(mapOf("path" to ":data:datasources")))
+
             implementation(libs.bundles.layer.data.datasources.core)
         }
 
@@ -92,4 +104,8 @@ sqldelight {
             packageName.set("${BuildVersion.environment.applicationId}.data.datasources.core.db")
         }
     }
+}
+
+task("testClasses").doLast {
+    println("This is a dummy testClasses task")
 }

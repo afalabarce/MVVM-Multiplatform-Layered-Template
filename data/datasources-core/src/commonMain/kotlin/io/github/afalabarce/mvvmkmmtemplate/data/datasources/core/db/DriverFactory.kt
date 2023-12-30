@@ -6,11 +6,6 @@ expect class DriverFactory {
     fun createDriver(): SqlDriver
 }
 
-object Database {
-    val databaseName = "KmmDatabase"
-}
-
-
 fun createDatabase(driverFactory: DriverFactory): KmmDatabase {
     val driver = driverFactory.createDriver()
     val database = KmmDatabase(driver)

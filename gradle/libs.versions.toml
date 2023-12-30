@@ -111,7 +111,8 @@ layer-data-datasources-core = [
     "ktor-client-content-negotiation",
     "ktor-client-logging",
     "ktor-client-serialization",
-    "ktor-serialization-kotlinx-json"
+    "ktor-serialization-kotlinx-json",
+    "ktorfit-lib"
 ]
 
 android-core = [

@@ -3,9 +3,9 @@ package io.github.afalabarce.mvvmkmmtemplate.data.datasources.core
 import org.junit.Assert
 import org.junit.Test
 
-class DataSourceCoreExampleTest {
+actual class DataSourceCoreExampleTest {
     @Test
-    fun testExample() {
+    actual fun testExample() {
         Assert.assertTrue("Check Android is mentioned", true)
     }
 }
