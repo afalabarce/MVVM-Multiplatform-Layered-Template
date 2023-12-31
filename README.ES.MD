@@ -63,4 +63,35 @@ en la estructura interna creada para KMP), podemos ver todos los módulos defini
 
 ![MVVM KMM Template.png](art/MVVM_KMM_Template.png)
 
+Como podemos apreciar en la imagen, el proyecto se divide de forma "superficial" en cuatro capas, las cuales a 
+su vez implementarán cada módulo que abstraerá y protegerá el acceso indebido desde un módulo a otro.
+A continuación se expone la funcionalidad de cada capa, así como la de cada módulo que la compone:
+
+- **core**, es una capa transversal, la cual dispone de módulos accesibles a capas concretas, para acciones concretas
+pero a su vez, dispone de módulos visibles para todas las capas, en los que se proporcionan funcionalidades que 
+pueden ser de utilidad común. Veamos cada uno de los módulos que componen esta capa:
+  - *common*, este módulo es visible para todas las capas y proporciona métodos útiles que pueden ser usados en cualquiera
+  de las capas del proyecto (por ejemplo, proporciona métodos que nos indican el sistema en el que se ejecuta la app).
+  - *viewmodels*, este módulo sólo es visible por el módulo de viewmodels de la capa **presentation**, y proporciona
+  funcionalidad básica para gestión y manipulación de estados en los viewmodels.
+  - *di*, este módulo tan solo recopila los distintos objetos de inyección de dependencia de cada módulo, para proporcionarlos
+  al **módulo ui de la capa presentation**, a fin de gestionar correctamente el árbol de dependencias.
+  - *ui*, este módulo sólo es visible por el **módulo ui de la capa presentation**, se proporciona en este módulo tanto el tema
+  de JetpackCompose, como composables de uso general. Lo ideal es que esta capa albergue abstracciones de los componentes a utilizar,
+  ya que de este modo, si se modifica algún elemento de compose, la UI principal no se verá afectada. Por ejemplo, podemos 
+  desarrollar los composables de TextField, Button, PasswordTextField, etc, adaptados al theming que requiramos.
+- **data**,
+  - *models*,
+  - *repository*,
+  - *datasources*,
+  - *datasources-core*,
+- **domain**,
+  - *models*,
+  - *repository*,
+  - *usecases*
+- **presentation**,
+  - *viewmodels*,
+  - *presentation*,
+  
+
 
