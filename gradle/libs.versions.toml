@@ -24,6 +24,7 @@ ksp-version = "1.9.21-1.0.16"
 ktorVersion = "2.3.6"
 ktorfit-version = "1.11.0"
 koin-compose-version = "1.1.0"
+datastore-version = "1.1.0-alpha07"
 
 [libraries]
 androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -63,7 +64,7 @@ sqlDelight-driver-coroutines-extensions = { module = "app.cash.sqldelight:corout
 sqlDelight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 sqlDelight-driver-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-
+jetpack-datastore = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore-version"}
 [bundles]
 
 layer-core-common = [
@@ -112,7 +113,8 @@ layer-data-datasources-core = [
     "ktor-client-logging",
     "ktor-client-serialization",
     "ktor-serialization-kotlinx-json",
-    "ktorfit-lib"
+    "ktorfit-lib",
+    "jetpack-datastore"
 ]
 
 android-core = [

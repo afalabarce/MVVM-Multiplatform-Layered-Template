@@ -1,6 +1,6 @@
 package io.github.afalabarce.mvvmkmmtemplate.data.datasources.core.db
 
-import io.github.afalabarce.mvvmkmmtemplate.data.datasources.core.features.Example.local.model.ExampleEntity
+import io.github.afalabarce.mvvmkmmtemplate.data.datasources.core.features.example.local.model.ExampleEntity
 
 class Database(databaseFactory: DriverFactory) {
     private val database = KmmDatabase(databaseFactory.createDriver())
