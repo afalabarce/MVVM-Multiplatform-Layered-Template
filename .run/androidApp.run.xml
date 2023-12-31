@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="androidApp" type="AndroidRunConfigurationType" factoryName="Android App">
-    <module name="MVVM-Multiplatform-Layered-Template.presentation.ui.main" />
+    <module name="ui.MVVM-Multiplatform-Layered-Template.presentation.ui.main" />
     <option name="DEPLOY" value="true" />
     <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
     <option name="DEPLOY_AS_INSTANT" value="false" />
