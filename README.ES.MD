@@ -63,8 +63,8 @@ en la estructura interna creada para KMP), podemos ver todos los módulos defini
 
 Teniendo en cuenta lo siguiente (siempre pensando en Origen -> Destino):
 - <span style="color:#339966">**${\color{green}Flechas \space Verdes}$**</span>, Módulo A es dependencia de Módulo B
-- <span style="color:#ff0000">**Flechas Rojas**</span>, Módulo A utiliza funcionalidad de Módulo B
-- <span style="color:#ff99cc">**Flechas Rosas**</span>, Módulo A es implementado en Módulo B
+- <span style="color:#ff0000">**${\color{red}Flechas \space Rojas}$**</span>, Módulo A utiliza funcionalidad de Módulo B
+- <span style="color:#ff99cc">**${\color{pink}Flechas \space Rosas}$**</span>, Módulo A es implementado en Módulo B
 
 ![MVVM KMM Template.png](art/MVVM_KMM_Template.png)
 
