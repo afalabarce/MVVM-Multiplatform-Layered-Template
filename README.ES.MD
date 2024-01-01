@@ -62,9 +62,9 @@ total de cada capa, permitiendo un desacople máximo en cada sección. Así pues
 en la estructura interna creada para KMP), podemos ver todos los módulos definidos en la siguiente imagen:
 
 Teniendo en cuenta lo siguiente (siempre pensando en Origen -> Destino):
-- <span style="color:#339966">**${\color{green}Flechas \space Verdes}$**</span>, Módulo A es dependencia de Módulo B
-- <span style="color:#ff0000">**${\color{red}Flechas \space Rojas}$**</span>, Módulo A utiliza funcionalidad de Módulo B
-- <span style="color:#ff99cc">**${\color{pink}Flechas \space Rosas}$**</span>, Módulo A es implementado en Módulo B
+- <span style="color:#339966">**${\color{green}Flechas\ Verdes}$**</span>, Módulo A es dependencia de Módulo B
+- <span style="color:#ff0000">**${\color{red}Flechas\ Rojas}$**</span>, Módulo A utiliza funcionalidad de Módulo B
+- <span style="color:#ff99cc">**${\color{pink}Flechas\ Rosas}$**</span>, Módulo A es implementado en Módulo B
 
 ![MVVM KMM Template.png](art/MVVM_KMM_Template.png)
 
