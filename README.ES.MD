@@ -153,5 +153,89 @@ Veamos por módulo cuales son sus dependencias:
 Como podemos apreciar, en base a la descripción de las distintas dependencias que hemos definido, tenemos la seguridad de que cada capa sólo es visible por la capa / módulo correcta
 evitando por completo posibles accesos indebidos, ya sea de forma intencionada o errónea.
   
+## Funcionalidades implementadas (por capa)
 
+### Core
+
+En la capa core, se implementan algunas de las funcionalidades básicas de toda la app, particularmente se gestionan los distintos elementos que van a permitirnos gestionar
+tanto el árbol de inyección de dependencias como la gestión de Viewmodels. Veamos, por cada módulo las posibiliades más interesantes que nos proporciona:
+
+#### Common
+
+En este módulo se define una de las funcionalidades más importantes de todo el proyecto, ya que nos permite gestionar de forma relativamente sencilla todo el proceso de provisión de 
+dependencias en todo el proyecto (de ahí que este módulo sea dependencia directa del resto de módulos del proyecto).
+
+En el package [io.github.afalabarce.mvvmkmmtemplate.core.common.di] se define la interfaz **KoinModuleLoader**, la cual expone una propiedad de solo lectura
+llamada **koinModules**, que no es más que una lista de módulos de koin.
+Esta interfaz la implementaremos en cada módulo que requiera de inyección de dependencias, por ejemplo,
+[data -> datasources-core], [data -> repository], [domain -> usecases] y [presesntation -> viewmodels].
+
+Su utilización es muy sencilla, veámoslo con un ejemplo de código (extraido de [data -> datasources-core]):
+
+```kotlin
+object DataSourceCoreDependencyInjector: KoinModuleLoader {
+    override val koinModules: List<Module>
+        get() = getPlatformInjects().union(
+            listOf(
+                module {
+                    single <ApiService>{
+                        Ktorfit
+                            .Builder()
+                            .baseUrl(ApiService.API_URL)
+                            .build()
+                            .create()
+                    }
+                    singleOf(::Database)
+                    single<AppPreferences>{ AppPreferencesImpl(get()) }
+                }
+            )
+        ).toList()
+}
+```
+
+Como vemos, lo más sencillo es crear un objeto que implemente la interfaz, y directamente definir el módulo con las dependencias propias del módulo.
+Además se proporciona un método getPlatformInjects que está marcado como **expected** a fin de que en cada plataforma definamos las dependencias que corresponda, es decir, en función de una plataforma 
+u otra, se definirán ciertas dependencias que sean requeridas por un sistema u otro (**ver ejemplos definidos en la capa**).
+
+Aparte, dispone de ciertas funciones de extensión, que de un modo u otro nos van a facilitar diversas operaciones (sobre todo formateo de objetos y conversiones seguras entre tipos).
+
+#### ViewModels
+
+En este módulo tan solo se ha definido una clase KmmViewModel (hereda de Viewmodel) que implementa un método de extensión a los CoroutineScope que permite una ejecución segura de un método de suspensión, ya que nos permite gestionar de forma 
+sencilla los posibles errores. Así pues, nuestros ViewModel deberán ser similares al siguiente ejemplo:
+
+```kotlin
+
+class MyViewModel(
+    private val myUseCase: MyUseCase
+): KmmViewModel() {
+    val myUseCaseResult by lazy { myUseCase.flowResult.stateIn(viewModelScope, SharingStarted.Lazily, initialValue) }
+  
+    fun queryResult() {
+        viewModelScope.safeLaunch(
+            onStart = { /* do on start */ },
+            onFinish = { /* do on finish */ },
+            onError = { /* do on raised error */ },
+            onStartContext = Dispatchers.Main,
+            onFinishContext = Dispatchers.Main
+        ) {
+            // Suspend query calls
+        }
+    }
+}
+
+```
+
+#### Di
+
+#### Ui
+
+### Capa data
+
+Es en esta capa donde disponemos de más funcionadlidades implementadas y quizá las más complejas de describir, para ello se va a intentar ser lo más explícito posible en la explicación 
+de las funcionalidades, así como su uso / despliegue.
+
+### Capa domain
+
+### Capa presentation
 
