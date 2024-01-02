@@ -62,9 +62,9 @@ total de cada capa, permitiendo un desacople máximo en cada sección. Así pues
 en la estructura interna creada para KMP), podemos ver todos los módulos definidos en la siguiente imagen:
 
 Teniendo en cuenta lo siguiente (siempre pensando en Origen -> Destino):
-- <span style="color:#339966">**${\color{green}Flechas\ Verdes}$**</span>, Módulo A es dependencia de Módulo B
-- <span style="color:#ff0000">**${\color{red}Flechas\ Rojas}$**</span>, Módulo A utiliza funcionalidad de Módulo B
-- <span style="color:#ff99cc">**${\color{pink}Flechas\ Rosas}$**</span>, Módulo A es implementado en Módulo B
+- <span style="color:#339966">**Flechas Verdes**</span>, Módulo A es dependencia de Módulo B
+- <span style="color:#ff0000">**Flechas Rojas**</span>, Módulo A utiliza funcionalidad de Módulo B
+- <span style="color:#ff99cc">**Flechas Rosas**</span>, Módulo A es implementado en Módulo B
 
 ![MVVM KMM Template.png](art/MVVM_KMM_Template.png)
 
@@ -111,12 +111,47 @@ desde la capa de dominio, a través de ViewModels.
   - *viewmodels*, este módulo es el responsable, organizado por feature, de gestionar las distintas peticiones y manipulación de datos y estados, a partir de los
   casos de uso, a través del módulo **domain:usecases**, proporcionando a la UI la información de forma reactiva, garantizando por tanto que, aparte de 
   que la UI no quedará congelada, tendremos un único punto de recolección y actualización de datos.
-  - *presentation*, este módulo se encargará de la presentación de la información proporcionada por los distintos viewmodels definidos en el módulo
+  - *ui*, este módulo se encargará de la presentación de la información proporcionada por los distintos viewmodels definidos en el módulo
   **presentation:viewmodels**, debemos prestar atención a que idealmente **no deberíamos utilizar componentes genéricos de compose, en beneficio de componentes
   propios**, ya que de este modo, conseguiremos extraer la responsabilidad de futuros cambios de funcionalidad o apariencia a un único punto.
 
-En este punto, hemos definido qué hace cada módulo en cada capa, pero queda pendiente explicar / definir lo expuesto en el esquema gráfico.
+En este punto, hemos definido qué hace cada módulo en cada capa, pero queda pendiente explicar / definir lo expuesto en el esquema gráfico. 
+Veamos por módulo cuales son sus dependencias:
 
+- **Prácticamente todos los módulos**, dependen de core -> common, por lo que no es necesario indicar esta dependencia.
+- **domain -> repository**, requiere de la inclusión de las siguientes dependencias:
+  - *domain -> models*, ya que en [domain -> repository] es donde se definen las interfaces que van a proporcionar los datos obtenidos de los distintos orígenes de datos
+  ya mapeados a las entidades de dominio definidas en esta capa.
+- **domain -> usecases**, se definen en este módulo las siguientes dependencias:
+  - *domain -> models*, ya que, [domain -> usecases] tiene como valores de retorno entidades de dominio, requiere de este módulo para poder realizar esta labor.
+  - *domain -> repository*, los casos de uso definidos en [domain -> usecases] requieren de los datos que se devolverán desde las funciones que se definen en las interfaces
+  descritas en este módulo.
+- **data -> datasources**, tiene las  siguientes dependencias:
+  - *data -> models*, ya que requiere los modelos de datos (locales y remotos)
+- **data -> datasources-core**, requiere las siguientes dependencias:
+  - *data -> datasources*, ya que es en [data -> datasources-core] donde se realiza la implementación de las interfaces definidas
+  en este módulo.
+  - *data -> models*, ya que requiere los modelos de datos (locales y remotos) para la implementación de las interfaces definidas en el punto anterior.
+- **data -> repository**, requiere las siguientes dependencias:
+  - *data -> datasources*, ya que es [data -> repository] donde se realiza la interpretación de los resultados de datasources y su adaptación a entidades de dominio.
+  - *data -> models*, ya que utiliza y es necesaria por los resultados proporcionados por la dependencia anterior.
+  - *domain -> models*, ya que es en [data -> repository] donde se realiza el mapeo de entidades de datos (locales y remotas) a entidades de dominio.
+  - *domain -> repository*, ya que en [data -> repository] es donde se implementan las interfaces definidas en este módulo.
+- **presentation -> viewmodels**, esta capa requiere las siguientes dependencias:
+  - *domain -> models*, en las capas de presentación y dominio, tan solo recolectamos datos en base a las entidades de dominio definidas en este módulo.
+  - *domain -> usecases*, los viewmodels tienen como única fuente de datos a los resultados proporcionados por los distintos casos de uso definidos en este módulo.
+  - *core -> viewmodels*, esta dependencia proporciona ciertas funcionalidades que pueden ser aprovechadas por el módulo de [presentation -> viewmodels].
+- **presentation -> ui**, la capa de presentación presenta las siguientes dependencias:
+  - *domain -> models*, en la capa de presentación, tan solo recolectamos datos en base a las entidades de dominio definidas en este módulo.
+  - *presentation -> viewmodels*, la capa de presentación, obtiene y proporciona feedback a recursos de datos tanto locales como remotos **únicamente a través de los viewmodels
+  relacionados**.
+  - *core -> di*, ya que el proveedor de dependencias (Koin) debe gestionarse desde la capa de presentación es preciso pasarle el árbol de dependencias de forma aséptica, lo que
+  conseguimos incluyendo esta dependencia y un objeto concreto que define todo el árbol.
+  - *core -> ui*, gracias a este módulo, vamos a centralizar toda la apariencia y theming de la app, para ello, es en este módulo donde se definirá el tema la app, así como los
+  componentes básicos (ya con los valores de tema aplicados) que se van a utilizar en la app.
+
+Como podemos apreciar, en base a la descripción de las distintas dependencias que hemos definido, tenemos la seguridad de que cada capa sólo es visible por la capa / módulo correcta
+evitando por completo posibles accesos indebidos, ya sea de forma intencionada o errónea.
   
 
 

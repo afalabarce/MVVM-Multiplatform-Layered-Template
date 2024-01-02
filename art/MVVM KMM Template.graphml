@@ -697,13 +697,13 @@
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.edge.framed">
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="384.96875" y="416.2781799379524"/>
-            <y:Point x="-134.34218504523523" y="416.2781799379524"/>
+            <y:Point x="384.96875" y="437.1261633919338"/>
+            <y:Point x="-134.34218504523523" y="437.1261633919338"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="3.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:StyleProperties>
-            <y:Property class="java.awt.Color" name="FramedEdgePainter.fillColor" value="#ff0000"/>
+            <y:Property class="java.awt.Color" name="FramedEdgePainter.fillColor" value="#339966"/>
           </y:StyleProperties>
         </y:GenericEdge>
       </data>
@@ -715,13 +715,13 @@
           <y:Path sx="0.0" sy="0.0" tx="-45.58113668918705" ty="20.017800832936473">
             <y:Point x="384.96875" y="691.4715615305067"/>
             <y:Point x="203.81489141675286" y="691.4715615305067"/>
-            <y:Point x="203.81489141675286" y="417.32057911065147"/>
-            <y:Point x="-179.92332173442227" y="416.2781799379524"/>
+            <y:Point x="203.81489141675286" y="437.12616339193374"/>
+            <y:Point x="-179.92332173442227" y="437.12616339193374"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="3.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:StyleProperties>
-            <y:Property class="java.awt.Color" name="FramedEdgePainter.fillColor" value="#ff0000"/>
+            <y:Property class="java.awt.Color" name="FramedEdgePainter.fillColor" value="#339966"/>
           </y:StyleProperties>
         </y:GenericEdge>
       </data>
@@ -732,14 +732,14 @@
         <y:GenericEdge configuration="com.yworks.edge.framed">
           <y:Path sx="-99.00132497414677" sy="-19.974873965874167" tx="37.433635473543646" ty="19.97521442600288">
             <y:Point x="539.4674250258532" y="990.6401240951395"/>
-            <y:Point x="203.81489141675286" y="990.6401240951395"/>
-            <y:Point x="203.81489141675286" y="416.2781799379524"/>
-            <y:Point x="-96.90854957169158" y="416.2781799379524"/>
+            <y:Point x="174.6277145811789" y="990.6401240951395"/>
+            <y:Point x="174.6277145811789" y="438.16856256463285"/>
+            <y:Point x="-96.90854957169158" y="438.16856256463285"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="3.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:StyleProperties>
-            <y:Property class="java.awt.Color" name="FramedEdgePainter.fillColor" value="#ff0000"/>
+            <y:Property class="java.awt.Color" name="FramedEdgePainter.fillColor" value="#339966"/>
           </y:StyleProperties>
         </y:GenericEdge>
       </data>
@@ -755,7 +755,7 @@
           <y:LineStyle color="#000000" type="line" width="3.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:StyleProperties>
-            <y:Property class="java.awt.Color" name="FramedEdgePainter.fillColor" value="#ff0000"/>
+            <y:Property class="java.awt.Color" name="FramedEdgePainter.fillColor" value="#339966"/>
           </y:StyleProperties>
         </y:GenericEdge>
       </data>
