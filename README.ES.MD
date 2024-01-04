@@ -246,7 +246,44 @@ Este módulo será el responsable de centralizar todo el subsistema de vistas ge
 de la aplicación dotándolo de algunas funcionalidades interesantes que, el tema por defecto proporcionado por la definición de JetpackCompose no tiene. Veamos a continuación
 de qué estamos hablando:
 
+El módulo proporciona un AppMaterialTheme, el cual implementa, aparte de lo proporcionado por MaterialTheme, una nueva propiedad llamada [dimens] la cual almacena la configuración
+de dimensiones para el proyecto, así pues, estos valores se almacenan en un objeto de tipo MobileDimens, el cual tiene la siguiente firma:
 
+```kotlin
+class MobileDimens(
+    val none: Dp,
+    val topSurface: Dp,
+    val startSurface: Dp,
+    val endSurface: Dp,
+    val bottomSurface: Dp,
+    val minTopSurface: Dp,
+    val minStartSurface: Dp,
+    val minEndSurface: Dp,
+    val minBottomSurface: Dp,
+    val mediumMarginTopSurface: Dp,
+    val mediumMarginStartSurface: Dp,
+    val mediumMarginEndSurface: Dp,
+    val mediumMarginBottomSurface: Dp,
+    val largeTopSurface: Dp,
+    val largeStartSurface: Dp,
+    val largeEndSurface: Dp,
+    val largeBottomSurface: Dp,
+    val appMargin: Dp,
+    val textFieldCorner: Dp,
+    val smallIconSize: Dp,
+    val buttonHeight: Dp,
+    val dialogCorner: Dp,
+    val focusedBorder: Dp,
+    val cornerRadius: Dp,
+)
+```
+
+Como podemos apreciar, se cubren la mayoría de parámetros que una app puede tener (si requerimos algún nuevo parámetro tan solo deberemos agregarlo).
+
+Además, durante la recomposición se proporciona una precarga basada en LocalComposition, llamada [LocalDimension], la cual, mediante [LocalDimension.current]
+ nos permitirá acceder a la configuración de dimensiones del sistema.
+
+También se proporcionan unos shape por defecto, y un par de shapes personalizados, para que se pueda apreciar la potencia de compose a la hora de diseñar formas.
 
 ### Capa data
 
