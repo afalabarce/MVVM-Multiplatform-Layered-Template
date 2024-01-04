@@ -293,9 +293,34 @@ punto, siendo más sencillo un posible refactor.
 ### Capa data
 
 Es en esta capa donde disponemos de más funcionadlidades implementadas y quizá las más complejas de describir, para ello se va a intentar ser lo más explícito posible en la explicación 
-de las funcionalidades, así como su uso / despliegue.
+de las funcionalidades, así como su uso / despliegue. Comencemos, a partir de los módulos más internos:
+
+#### models
+
+#### datasources
+
+#### datasources-core
+
+#### repository
 
 ### Capa domain
 
+La capa de dominio, es quizá de las más sencillas, y requiere de una explicación mínima, aunque sí incidiremos en algunas buenas prácticas a tener en cuenta.
+Veamos cada módulo por separado:
+
+#### models
+
+#### repository
+
+#### usecases
+
 ### Capa presentation
+
+En la capa de presentación es donde va a cobrar sentido todo lo expuesto en las capas anteriores, ya que es en esta capa donde, gracias a los datos proporcionados
+por la capa de dominio, vamos a poder representar la información que el usuario necesite en la UI que le proporcionaremos. Tengamos en cuenta que esta plantilla se 
+basa en un patrón MVVM, por lo que en esta capa definiremos los siguientes módulos, con sus propias particularidades:
+
+#### ViewModels
+
+#### UI
 
