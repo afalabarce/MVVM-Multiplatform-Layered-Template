@@ -1,7 +1,7 @@
 package io.github.afalabarce.mvvmkmmtemplate.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -10,15 +10,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -84,26 +80,10 @@ private val DarkColorScheme = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
-private val AppShapes = Shapes(
-    extraSmall = RoundedCornerShape(2.dp),
-    small = RoundedCornerShape(4.dp),
-    medium = RoundedCornerShape(8.dp),
-    large = RoundedCornerShape(16.dp),
-    extraLarge = RoundedCornerShape(32.dp)
-)
-
-private val AppTypography = Typography(
-    bodyMedium = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp
-    )
-)
-
 val LocalThemeIsDark = compositionLocalOf { mutableStateOf(true) }
 
 @Composable
-fun AppTheme(
+fun AppMaterialTheme(
     content: @Composable() () -> Unit
 ) {
     val systemIsDark = isSystemInDarkTheme()
@@ -115,7 +95,7 @@ fun AppTheme(
         SystemAppearance(!isDark)
         MaterialTheme(
             colorScheme = if (isDark) DarkColorScheme else LightColorScheme,
-            typography = AppTypography,
+            typography = Typography,
             shapes = AppShapes,
             content = {
                 Surface(content = content)
@@ -123,6 +103,35 @@ fun AppTheme(
         )
     }
 }
+
+object AppMaterialTheme {
+    val colorScheme: ColorScheme
+        @Composable
+        @ReadOnlyComposable
+        get() = MaterialTheme.colorScheme
+    val typography: Typography
+        @Composable
+        @ReadOnlyComposable
+        get() = MaterialTheme.typography
+
+    /**
+     * Retrieves the current [Shapes] at the call site's position in the hierarchy.
+     */
+    val shapes: Shapes
+        @Composable
+        @ReadOnlyComposable
+        get() = MaterialTheme.shapes
+
+    /**
+     * Retrieves the current [dimens] at the call site's position in the hierarchy.
+     */
+    val dimens: MobileDimens
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDimension.current
+
+}
+
 
 @Composable
 expect fun SystemAppearance(isDark: Boolean)

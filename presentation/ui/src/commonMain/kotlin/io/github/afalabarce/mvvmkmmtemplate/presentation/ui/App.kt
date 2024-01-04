@@ -35,17 +35,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import io.github.afalabarce.mvvmkmmtemplate.core.common.openUrl
-import io.github.afalabarce.mvvmkmmtemplate.core.ui.theme.AppTheme
+import io.github.afalabarce.mvvmkmmtemplate.core.ui.theme.AppMaterialTheme
 import io.github.afalabarce.mvvmkmmtemplate.core.ui.theme.LocalThemeIsDark
 import io.github.afalabarce.mvvmkmmtemplate.presentation.ui.di.PresentationUiDependencyInjector
 import org.koin.compose.KoinApplication
-import org.koin.compose.KoinContext
 
 @Composable
 internal fun App() = KoinApplication(moduleList = {
     PresentationUiDependencyInjector.koinModules
 }) {
-    AppTheme {
+    AppMaterialTheme {
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var passwordVisibility by remember { mutableStateOf(false) }
@@ -58,7 +57,7 @@ internal fun App() = KoinApplication(moduleList = {
                 Text(
                     text = "Login",
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(AppMaterialTheme.dimens.appMargin)
                 )
 
                 Spacer(modifier = Modifier.weight(1.0f))
@@ -68,7 +67,7 @@ internal fun App() = KoinApplication(moduleList = {
                     onClick = { isDark = !isDark }
                 ) {
                     Icon(
-                        modifier = Modifier.padding(8.dp).size(20.dp),
+                        modifier = Modifier.padding(AppMaterialTheme.dimens.minStartSurface).size(20.dp),
                         imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
                         contentDescription = null
                     )
@@ -80,7 +79,7 @@ internal fun App() = KoinApplication(moduleList = {
                 onValueChange = { email = it },
                 label = { Text("Email") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                modifier = Modifier.fillMaxWidth().padding(AppMaterialTheme.dimens.appMargin)
             )
 
             OutlinedTextField(
@@ -89,7 +88,7 @@ internal fun App() = KoinApplication(moduleList = {
                 label = { Text("Password") },
                 singleLine = true,
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(AppMaterialTheme.dimens.appMargin),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password
                 ),
@@ -103,14 +102,14 @@ internal fun App() = KoinApplication(moduleList = {
 
             Button(
                 onClick = { /* Handle login logic here */ },
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                modifier = Modifier.fillMaxWidth().padding(AppMaterialTheme.dimens.appMargin)
             ) {
                 Text("Login")
             }
 
             TextButton(
                 onClick = { openUrl("https://github.com/terrakok") },
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                modifier = Modifier.fillMaxWidth().padding(AppMaterialTheme.dimens.appMargin)
             ) {
                 Text("Open github")
             }

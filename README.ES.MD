@@ -228,7 +228,25 @@ class MyViewModel(
 
 #### Di
 
+Este módulo es el responsable de centralizar los distintos árboles de dependencia de cada módulo, aglutinando todos en un 
+únicoárbol que nos va a permitir la generación sencilla de las dependencias, minimizando además los posibles errores, por estar
+acotado cada módulo.
+
+Para ello, tan solo se genera un objeto llamado [io.github.afalabarce.mvvmkmmtemplate.core.di.CoreDependencyInjection] el cual proporciona,
+al igual que el resto de objetos de dependencia, la implementación de la interfaz [io.github.afalabarce.mvvmkmmtemplate.core.common.di.KoinModuleLoader].
+
+Al contrario que sucede con la inyección de dependencias de otros módulos, en este no es preciso agregar nada (salvo que, modifiquemos la arquitectura y agreguemos 
+nuestros propios módulos).
+
+Por todo lo indicado en los párrafos anteriores, **esta capa no es preciso alterarla**. 
+
 #### Ui
+
+Este módulo será el responsable de centralizar todo el subsistema de vistas generales, así como la gestión del tema. Para ello, se ha personalizado el diseño del tema 
+de la aplicación dotándolo de algunas funcionalidades interesantes que, el tema por defecto proporcionado por la definición de JetpackCompose no tiene. Veamos a continuación
+de qué estamos hablando:
+
+
 
 ### Capa data
 
