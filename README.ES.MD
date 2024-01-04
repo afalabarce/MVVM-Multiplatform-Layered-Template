@@ -285,6 +285,11 @@ Además, durante la recomposición se proporciona una precarga basada en LocalCo
 
 También se proporcionan unos shape por defecto, y un par de shapes personalizados, para que se pueda apreciar la potencia de compose a la hora de diseñar formas.
 
+Gracias a los elementos de que disponemos, es en el módulo de Core-UI donde vamos a definir los componentes genéricos que nuestra app va a usar, es decir, deberíamos
+**prohibir** el uso de composables de las apis generales en nuestra app, definiendo wrappers propios, con nuestro tema, y que serían los utilizados en el sistema, 
+así gracias a esto, en el caso de que se produzca algún cambio en las apis generales, tan solo deberemos modificar las dependencias y referencias / llamadas en un único 
+punto, siendo más sencillo un posible refactor.
+
 ### Capa data
 
 Es en esta capa donde disponemos de más funcionadlidades implementadas y quizá las más complejas de describir, para ello se va a intentar ser lo más explícito posible en la explicación 
