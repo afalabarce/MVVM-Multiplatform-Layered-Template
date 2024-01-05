@@ -229,7 +229,7 @@ class MyViewModel(
 #### Di
 
 Este módulo es el responsable de centralizar los distintos árboles de dependencia de cada módulo, aglutinando todos en un 
-únicoárbol que nos va a permitir la generación sencilla de las dependencias, minimizando además los posibles errores, por estar
+único árbol que nos va a permitir la generación sencilla de las dependencias, minimizando además los posibles errores, por estar
 acotado cada módulo.
 
 Para ello, tan solo se genera un objeto llamado [io.github.afalabarce.mvvmkmmtemplate.core.di.CoreDependencyInjection] el cual proporciona,
