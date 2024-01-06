@@ -427,6 +427,267 @@ estas interfaces o contratos, teniendo en cuenta que los tipos devueltos serán 
 
 #### datasources-core
 
+Esta capa es la que, con diferencia, tiene un mayor nivel de complejidad a nivel de proyecto ya que, entre otras, tiene las implementaciones y definiciones de 
+los distintos orígenes de datos de la app, entre los que destacan (los veremos a continuación en mayor detalle):
+
+- **Ktor + Ktorfit**, como sistema de conexión a APIs externas (REST principalmente.)
+- **Jetpack Datastore**, como sistema de almacenamiento de preferencias.
+- **SqlDelight**, como "ORM" y capa de acceso a datos.
+
+Veamos en detalle cada uno de estos sistemas de acceso a datos:
+
+##### **Ktor + Ktorfit**
+
+[Ktor-Client](https://ktor.io/docs/getting-started-ktor-client.html) es el estándar de facto en la gestión de comunicaciones externas, por ejemplo a APIs REST, pero si bien no es excesivamente complejo su uso, queda eclipsado por el 
+sistema utilizado de forma constante en Android, esto es, [retrofit](https://square.github.io/retrofit/). Para subsanar este "problema" y permitir una curva de aprendizaje casi plana, el desarrollador
+[Foso Github](https://github.com/Foso) ha creado un plugin y sus correspondientes librerías para KMP, llamado [Ktorfit](https://github.com/Foso/Ktorfit) gracias al cual, podemos utilizar APIs en KMP al estilo de como
+las utilizamos en Android.
+
+A continuación se muesta la definición de una interfaz típica utilizada con Ktorfit:
+
+```kotlin
+interface ApiService {
+    @GET("/api/values")
+    suspend fun getAllItems(): List<String>
+
+    @POST("/api/values")
+    suspend fun putAllItems(@Body items: List<String>)
+    companion object {
+        const val API_URL = "https://your.own.api"
+    }
+}
+```
+
+Como podemos ver, la definición de la interfaz, es idéntica a lo que ya conocemos de retrofit.
+
+Para crear la instancia del ApiService, nos apoyaremos en el inyector de dependencias, esto es, Koin:
+
+```kotlin
+expect fun getPlatformInjects(): List<Module>
+
+object DataSourceCoreDependencyInjector: KoinModuleLoader {
+    override val koinModules: List<Module>
+        get() = getPlatformInjects().union(
+            listOf(
+                module {
+                    single <ApiService>{
+                        Ktorfit
+                            .Builder()
+                            .baseUrl(ApiService.API_URL)
+                            .build()
+                            .create()
+                    }
+                    singleOf(::Database)
+                    single<AppPreferences>{ AppPreferencesImpl(get()) }
+                }
+            )
+        ).toList()
+}
+```
+
+Como vemos, establecemos más elementos, aparte de la creación de la instancia del ApiService, lo cual nos sirve, didácticamente,
+para comprender mejor el sistema de inyección de dependencias propuesto en esta plantilla.
+
+
+##### **Jetpack Datastore**
+
+En el mundo Android, [Jetpack Datastore](https://developer.android.com/jetpack/androidx/releases/datastore) se ha convertido en el 
+nuevo estándar de facto en el almacenamiento de preferencias, gracias a su enfoque reactivo y asíncrono. Para KMM, salvo la inicialización
+del objeto en base a las particularidades de cada plataforma, el funcionamiento es idéntico al que ya podemos conocer si venimos del mundo
+Android.
+
+*Como ejercicio didáctico, se propone revisar cómo instanciamos en esta plantilla el subsistema para Datastore*.
+
+Salvando las implementaciones específicas para su inicialización, se muestra a continuación un ejemplo de gestión de preferencias con JetpackDatastore:
+
+- Interfaz definida en [io.github.afalabarce.mvvmkmmtemplate.data.features.preferences]:
+
+```kotlin
+interface AppPreferences {
+    fun getDeviceId(): Flow<Long>
+    suspend fun setDeviceId(deviceId: Long)
+}
+```
+
+- Implementación de la interfaz, en [io.github.afalabarce.mvvmkmmtemplate.data.core.features.preferences]
+
+```kotlin
+class AppPreferencesImpl(
+    private val dataStore: DataStore<Preferences>
+): AppPreferences {
+    override fun getDeviceId(): Flow<Long> = dataStore.data.map { preferences ->
+        preferences[DEVICE_ID_KEY] ?: 0
+    }
+
+    override suspend fun setDeviceId(deviceId: Long) {
+        dataStore.edit { preferences ->
+            preferences[DEVICE_ID_KEY] = deviceId
+        }
+    }
+
+    companion object {
+        private val DEVICE_ID_KEY = longPreferencesKey("DeviceId")
+    }
+}
+```
+
+Toda la creación de las preferencias se gestiona desde cada plataforma, gracias al método definido en
+[io.github.afalabarce.mvvmkmmtemplate.data.datasources.core.features.preferences.DataStoreInstance.kt], en conjunción con
+la inyección de dependencias particular de cada plataforma (ver en el ejemplo de código de Koin en la sección de Ktor, la expected fun
+definida y sus correspondientes actual fun).
+
+Como nota final sobre DataStore, lo interesante es que ya lo tenemos todo definido, y tan solo debemos centrarnos en lo importante,
+definir e implementar la interfaz y sus métodos a partir de los cuales nos vamos a apoyar para una gestión sencilla de preferencias.
+
+##### SqlDelight
+
+Esta característica es, quizá, de las más importantes, pero también la que más diferencias tiene con respecto al desarrollo de apps
+Android, ya que si bien con Room todo era bastante sencillo, con SqlDelight, si bien no es complejo, no es tan simple como con Room.
+
+SqlDelight nos permite abstraer en gran medida las operaciones [CRUD](https://es.wikipedia.org/wiki/CRUD), el resultado final, tras
+compilar satisfactoriamente, es que se crean una serie de clases que nos van a permitir realizar las distintas operaciones ya, en código
+Kotlin, de forma similar a lo que conseguimos con Room.
+
+- **Inicialización del modelo de datos**
+
+Como en todo proyecto que requiera de un sistema de bases de datos local, deberemos definir un modelado inicial que será la base de nuestro
+desarrollo, para ello, requerimos de la creación de un **fichero con extensión .sq**, su nombre es indiferente, aunque por convención lo
+ideal es nombrarlo con el mismo nombre que el proyecto (por ejemplo), eso sí, en una ruta muy particular de la sección de código común ([commonMain]):
+
+![sqldelight_sq_file_path.png](art/sqldelight_sq_file_path.png)
+
+Como vemos en la captura anterior, se crea una carpeta [sqldelight] exactamente al mismo nivel que las carpetas de código, creando además una 
+**estructura de directorios idéntica a la que tenemos en código**, esto es muy importante ya que es la que va a determinar la correcta creación,
+ en tiempo de compilación, de ciertos objetos y entidades que nos van a resultar de utilidad en el mapeo de datos.
+
+**Estructura del fichero .sq**
+
+Este fichero tiene una estructura bastante sencilla, pero con ciertas restricciones que deberemos tener en cuenta:
+
+- Es un fichero de código SQL, por lo que cada sentencia SQL que escribamos deberá finalizar con un ;
+- Las palabras reservadas SQL **deben ir en mayúsculas** de lo contrario se producirán errores de compilación.
+
+En cuanto a su estructura, al inicio del fichero definiremos todas las tablas y restricciones (constraints) que consideremos necesarias para nuestro 
+modelo de datos, a continuación, y aquí está la parte más interesante, definiremos los métodos que vamos a utilizar en nuestras consultas, teniendo en cuenta
+que el **nombre del método va en una línea, finalizando con :** y en las siguientes líneas, la sentencia SQL que va a permitir obtener los datos.
+Como particularidad, **al definir un método, si éste debe tener parámetros, estos se indicarán en la sentencia SQL mediante ?**.
+
+Veamos un ejemplo práctico:
+
+```sqldelight
+CREATE TABLE table_example (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT ''
+);
+
+selectAll:
+SELECT * FROM table_example;
+
+insertItem:
+INSERT INTO table_example(title,description)
+VALUES (?, ?);
+
+updateItem:
+    UPDATE table_example SET title = ?, description = ? WHERE id = ?;
+
+deleteById:
+DELETE FROM table_example WHERE id = ?;
+
+deleteAll:
+DELETE FROM table_example;
+```
+
+En el ejemplo anterior, van a suceder varias cosas tras compilar:
+
+- Se va a crear una clase Table_example que abstrae la estructura de la tabla que hemos creado.
+- Se va a crear una clase de tipo KmmDatabase, que inyectada, nos va a proporcionar varias propiedades interesantes:
+  - Schema, nos va a proporcionar las tablas y demás elementos importantes de la base de datos.
+  - queries, de tipo [MvvmKmmTemplateQueries] (ojo al prefijo que coincide con el Nombre del fichero .sq) en el que se nos 
+  proporcionan todos los métodos definidos en el fichero sq.
+
+Una vez compilado satisfactoriamente, podremos crear nuestros Dao, aunque tal cual funciona SqlDelight, nuestro Dao será nuestra
+propiedad queries de la clase KmmDatabase, así pues, tan solo nos queda crear nuestro puente de datos, veamos un ejemplo:
+
+```kotlin
+class Database(databaseFactory: DriverFactory) {
+    private val database = KmmDatabase(databaseFactory.createDriver())
+    private val dbQuery = database.mvvmKmmTemplateQueries
+
+    internal fun clearDatabase() {
+        dbQuery.transaction {
+            dbQuery.deleteAll()
+        }
+    }
+
+    internal fun deleteById(id: Long) {
+        dbQuery.transaction {
+            dbQuery.deleteById(id)
+        }
+    }
+
+    internal fun getAllEntities(): List<ExampleEntity> {
+        return dbQuery.selectAll(::exampleEntityMapper).executeAsList()
+    }
+
+    internal fun insertOrUpdateEntities(vararg entities: ExampleEntity){
+        dbQuery.transaction {
+            entities.forEach { entity ->
+                if (entity.id == 0L) {
+                    dbQuery.insertItem(
+                        entity.title,
+                        entity.description
+                    )
+                } else {
+                    dbQuery.updateItem(
+                        entity.title,
+                        entity.description,
+                        entity.id
+                    )
+                }
+            }
+        }
+    }
+
+    private fun exampleEntityMapper(
+        id: Long,
+        title: String,
+        description: String
+    ): ExampleEntity = ExampleEntity(
+        id = id,
+        title = title,
+        description = description
+    )
+
+    companion object {
+        val databaseName = "KmmDatabase"
+    }
+}
+```
+
+Como podemos ver, podemos encapsular (es muy muy recomendable) todas las peticiones en un entorno transaccional, gracias a [dbQuery.transaction],
+esto es así porque en caso de realizar inserciones o borrados de objetos que tienen relación entre sí, si se produce un error
+la transacción completa se cancelaría y no quedarían datos inconsistentes en el sistema.
+
+También nos fijaremos en esos "mappers" privados, estos nos van a servir para mapear un objeto que es de tipo Entidad local a lo que el sistema requiere
+como vemos, pasamos referencia a la función de mapeo y automáticamente, se genera el resultado que necesitamos.
+
+- **Migraciones**
+
+Un aspecto importantísimo en cualquier app que tiene entre sus características el almacenamiento local de información en una base de datos SQL
+es la evolución de la misma, evolución que puede provocar nuevas necesidades y que, por tanto, requiera modificaciones en la estructura de la base de datos.
+
+Al igual que sucedía en Android con Room, que se requieren de ciertas modificaciones e instancias de elementos que nos permiten alterar la base de datos,
+con SqlDelight también tenemos la posibilidad de ejecutar migraciones desde una versión de la base de datos a otra, para ello deberemos disponer dentro de
+la carpeta sqldelight de una **carpeta llamada migrations**, dentro de la cual, será donde agreguemos cada cambio que necesitemos a la base de datos, eso sí
+deberemos tener en cuenta que, en este caso, **la extensión de los ficheros a utilizar tendrán extensión .sqm** y serán nombrados en función de la versión con 
+la que vayamos a trabajar (1.sqm, 2.sqm, ...).
+
+**ATENCIÖN**: el fichero 1.sqm indica que estamos migrando desde la versión 1 a la 2, el fichero 2.sqm es el que gestionará el cambio de la versión 2 a la 3, 
+y así sucesivamente.
+
+Para una información completa sobre visitar el sitio relacionado para las [Migraciones en SqlDeLight](https://cashapp.github.io/sqldelight/2.0.0-alpha05/multiplatform_sqlite/migrations/).
+
 #### repository
 
 ### Capa domain
