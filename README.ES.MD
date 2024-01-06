@@ -690,6 +690,12 @@ Para una información completa sobre visitar el sitio relacionado para las [Migr
 
 #### repository
 
+En este módulo, definimos tanto los mapeadores (idealmente como funciones de extensión, para no sobrecargar el árbol de dependencias), como las implementaciónes de 
+las interfaces definidas en [domain:repository], es aquí donde, en función de las necesidades, determinaremos el origen de los datos a mostrar (por ejemplo, en base a caducidad de
+caché podemos determinar que al refrescar una lista ha llegado el momento de volver a recuperarla de una API remota).
+
+**Como en el grueso de módulos, en principio en este no debería ser preciso realizar ninguna implementación fuera del ámbito de [commonMain]**.
+
 ### Capa domain
 
 La capa de dominio, es quizá de las más sencillas, y requiere de una explicación mínima, aunque sí incidiremos en algunas buenas prácticas a tener en cuenta.
