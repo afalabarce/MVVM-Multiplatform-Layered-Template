@@ -29,6 +29,102 @@ los siguientes puntos:
   - Comprobar que el sistema cumple los requisitos mínimos para desarrollos KMP para iOS con
     [KDoctor](https://github.com/Kotlin/kdoctor).
 
+## Estructura de un módulo KMP
+
+Todo proyecto definido para **K**otlin **M**ulti**P**latform tiene una estructura claramente definida, que, nos permitirá
+la generación de código personalizado en cada plataforma, teniendo la posibilidad de, por ejemplo, definir una función de forma común pero que, 
+en función de la plataforma, deberá ser inicializada de una forma u otra.
+
+Veamos a continuación la estructura típica para un módulo KMP (en este caso, para un módulo que soporta las plataformas 
+Android, iOS y JVM - Desktop -):
+
+| Estructura del módulo                       |                                                                                                                                                                                                                                                                                    |
+|---------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ![kmp_structure.png](art/kmp_structure.png) | Como podemos ver, esta estructura es la más compleja que vamos a obtener, ya que aparte de los propios módulos de código específicos de cada plataforma, disponemos además de su correspondiente módulo de testing. Veamos a continuación las particularidades de esta estructura. |
+
+Cada carpeta definida en el módulo contendrá exactamente la misma estructura de carpetas (package), a fin de que en el caso de que requiramos redefinir una clase o una 
+funcionalidad, lo podamos hacer sin mayores problemas. A continuación especificaremos qué hace y para qué sirve cada uno (aunque está bastante claro en base a los nombres):
+
+- **androidMain**, contiene las definiciones y código específicos de Android. En esta sección deberemos inicializar todo lo necesario para la plataforma Android, es decir,
+aquí en el caso de tener que instanciar algún tipo de objeto que requiera un Context o cualquier otra API específica de Android, se podrá realizar aquí sin mayor problema.
+- **androidTest**, contiene las implementaciones de test unitarios que requieran elementos específicos de Android. De este modo, si en [androidMain] hemos instanciado algún
+objeto específico, podremos testearlo aquí.
+- **commonMain**, en este módulo es donde vamos a tener el grueso de implementaciones, así como las expect class cuya implementación se delega a cada plataforma.
+- **commonTest**, contiene las implementaciones de test unitarios que no requieren de elementos específicos de una plataforma.
+- **iosMain**, contiene, **en lenguaje Kotlin**, implementaciones específicas para la plataforma iOS, se implementarán inicializaciones específicas de objetos, o acceso a api
+a través del puente Kotlin-Swift que implementa KMP.
+- **iosTest** contiene las implementaciones de test unitarios que requieran elementos o instancias específicas la plataforma iOS. Se utiliza al igual que en
+[iosMain] el puente Kotlin-Swift.
+- **jvmMain**, este módulo contiene las implementaciones específicas para las ejecuciones en escritorio (ya sean MacOS, Linux, Windows), por lo que se utilizará cualquier elemento
+que nos proporciona la JVM estándar.
+- jvmTest, contiene las implementaciones de tests unitarios que requieran elementos espécificos de la JVM y que, por tanto no sean de interés para el resto de plataformas.
+
+### Definiciones expect
+
+En KMP se introduce, o se hace necesario, el uso de funciones o clases marcadas con la palabra reservada **expect**, estas funciones y/o clases se definen en el módulo
+[commonMain], pero se implementan en cada plataforma, marcando su implementación con la palara reservada **actual**. A tener en cuenta que, para realizar la implementación, se requiere
+de una nomenclatura particular, por ejemplo, si en [commonMain] tenemos el fichero (definido por su package) [io.afalabarce.mvvmkmmtemplate.data.datasources.core.db.DriverFactory.kt] 
+en el resto de plataformas, deberemos definir un fichero que será en el que realizaremos la implementación de la clase (o función expect) que requiramos:
+- **[io.afalabarce.mvvmkmmtemplate.data.datasources.core.db.DriverFactory.android.kt]**, se realiza la implementación de la clase / funciones utilizando elementos propios de android.
+- **[io.afalabarce.mvvmkmmtemplate.data.datasources.core.db.DriverFactory.ios.kt]**, se realiza la implementación de la clase / funciones utilizando el puente Kotlin - Swift proporcionado por KMP.
+- **[io.afalabarce.mvvmkmmtemplate.data.datasources.core.db.DriverFactory.jvm.kt]**, se realiza la implementación de la clase / funciones utilizando elementos de la JVM estándar.
+
+Veamos un ejemplo, precisamente con el fichero propuesto como ejemplo:
+
+#### Definición en commonMain
+
+```kotlin
+expect class DriverFactory {
+    fun createDriver(): SqlDriver
+}
+```
+
+#### Implementación para plataforma Android
+
+```kotlin
+actual class DriverFactory {
+  private val context: Context by inject(Context::class.java)
+  actual fun createDriver(): SqlDriver {
+    return AndroidSqliteDriver(
+      KmmDatabase.Schema,
+      this.context,
+      Database.databaseName)
+  }
+}
+```
+
+
+#### Implementación para plataforma iOS
+
+```kotlin
+actual class DriverFactory {
+    actual fun createDriver(): SqlDriver {
+        return NativeSqliteDriver(
+            KmmDatabase.Schema,
+            Database.databaseName
+        )
+    }
+}
+```
+
+#### Implementación para Escritorio (JVM)
+
+```kotlin
+actual class DriverFactory {
+    actual fun createDriver(): SqlDriver {
+        val driver: SqlDriver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+        KmmDatabase.Schema.create(driver)
+        return driver
+    }
+}
+```
+
+Como vemos en cada implementación se define una clase KmmDatabase, esta clase es generada por el compilador, ya que es ese nombre el que hemos dado en la configuración
+de gradle para la base de datos basada en SqlDelight.
+
+Como podemos ver, una vez marcamos la clase como expect, todas sus implementaciones, deben ir marcadas como actual, al igual que las funciones o propiedades que pueda contener.
+
+
 ## Ejecución de la app en las distintas plataformas
 
 Se han proporcionado tres tareas de proyecto para la ejecución de la app desarrollada en cada plataforma,
@@ -297,7 +393,33 @@ de las funcionalidades, así como su uso / despliegue. Comencemos, a partir de l
 
 #### models
 
+En este módulo, definiremos las data class necesarias para la gestión correcta tanto de las entidades locales, como remotas.
+A tener en cuenta que, ya que utilizamos SqlDelight como motor de persistencia local, vamos a tener que definir nuestras entidades 
+locales de un modo un poco especial (aplica el mismo formato a entidades para remote):
+
+```kotlin
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class ExampleEntity(
+    @SerialName("id")
+    val id: Long,
+    @SerialName("title")
+    val title: String,
+    @SerialName("description")
+    val description: String
+)
+```
+
+Como consejo, lo ideal es distribuir los distintos modelos de datos en base a sus feature, organizando en local o remote en función de las 
+necesidades.
+
 #### datasources
+
+Esta capa no es más que la definición de las interfaces de comunicación entre la implementación de los repositorios y la propia implementación de 
+estas interfaces o contratos, teniendo en cuenta que los tipos devueltos serán los definidos en el módulo 
+[data -> models]. No tiene necesidad de más explicaciones este módulo.
 
 #### datasources-core
 
