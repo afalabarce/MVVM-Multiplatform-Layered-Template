@@ -62,7 +62,7 @@ que nos proporciona la JVM estándar.
 ### Definiciones expect
 
 En KMP se introduce, o se hace necesario, el uso de funciones o clases marcadas con la palabra reservada **expect**, estas funciones y/o clases se definen en el módulo
-[commonMain], pero se implementan en cada plataforma, marcando su implementación con la palara reservada **actual**. A tener en cuenta que, para realizar la implementación, se requiere
+[commonMain], pero se implementan en cada plataforma, marcando su implementación con la palabra reservada **actual**. A tener en cuenta que, para realizar la implementación, se requiere
 de una nomenclatura particular, por ejemplo, si en [commonMain] tenemos el fichero (definido por su package) [io.afalabarce.mvvmkmmtemplate.data.datasources.core.db.DriverFactory.kt] 
 en el resto de plataformas, deberemos definir un fichero que será en el que realizaremos la implementación de la clase (o función expect) que requiramos:
 - **[io.afalabarce.mvvmkmmtemplate.data.datasources.core.db.DriverFactory.android.kt]**, se realiza la implementación de la clase / funciones utilizando elementos propios de android.
