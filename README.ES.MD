@@ -389,7 +389,11 @@ punto, siendo más sencillo un posible refactor.
 ### Capa data
 
 Es en esta capa donde disponemos de más funcionadlidades implementadas y quizá las más complejas de describir, para ello se va a intentar ser lo más explícito posible en la explicación 
-de las funcionalidades, así como su uso / despliegue. Comencemos, a partir de los módulos más internos:
+de las funcionalidades, así como su uso / despliegue. 
+
+**NOTA**: A tener en cuenta que, salvo en el módulo [datasources-core], no debería ser necesario realizar implementaciones específicas a cada plataforma en el resto de módulos.
+
+Comencemos, a partir de los módulos más internos:
 
 #### models
 
