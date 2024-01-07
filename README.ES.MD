@@ -827,3 +827,7 @@ podemos generar paquetes para:
   - macOS, generamos un fichero .dmg que nos facilitará la tarea de despliegue.
   - Windows, generamos un fichero .msi.
   - Linux (Debian), generamos un fichero .deb.
+
+Para realizar el despliegue (generar los instaladores para las plataformas de escritorio), tan solo debemos movernos al árbol de tareas de gradle y, 
+en la lista de tareas de proyecto, fijarnos en la que nos indica [compose desktop], en ella veremos disponibles las distintas tareas 
+**packageRelease[Deb|Msi|Dmg]**
