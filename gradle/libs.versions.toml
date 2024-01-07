@@ -25,7 +25,7 @@ ktorVersion = "2.3.6"
 ktorfit-version = "1.11.0"
 koin-compose-version = "1.1.0"
 datastore-version = "1.1.0-alpha07"
-constraint-layout-version = "0.2.3"
+constraint-layout-version = "0.3.0-alpha01"
 
 [libraries]
 androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }

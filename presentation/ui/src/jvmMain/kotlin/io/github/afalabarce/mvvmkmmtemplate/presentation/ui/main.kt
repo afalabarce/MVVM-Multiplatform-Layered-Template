@@ -1,3 +1,5 @@
+package io.github.afalabarce.mvvmkmmtemplate.presentation.ui
+
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application

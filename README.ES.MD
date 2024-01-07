@@ -815,3 +815,15 @@ Unas de las pocas diferencias que tenemos en el desarrollo en KMP con Compose Mu
 - Puesto que no tenemos ViewModels como tal, y nuestra implementación de viewmodels es a partir del desarrollo de [MokoMVVM](https://github.com/icerockdev/moko-mvvm), para inyectar
 los viewmodels en nuestros composables, utilizaremos koinInject y no koinViewModel, tal y como hacíamos en Android.
 
+## Despliegue
+
+Como bien sabemos, cada plataforma es particular en cuanto a su sistema de despliegue, por lo que la plantilla ha sido preparada para el despliegue en cada una de ellas de una forma
+relativamente sencilla. Así pues, tenemos las siguientes configuraciones de despliegue, por plataforma, todo parametrizado, claro está en el módulo de [presentation:ui]:
+- Android, se gestionará el despliegue, indicando además la generación de un paquete aab (para su publicación al Play Store) utilizando un almacén de claves de cifrado, configurado en el 
+build.gradle.kts del módulo de presentación.
+- iOS, este despligue depende en gran medida de la configuración de equipo que hayamos realizado, preferiblemente desde XCode, ya que nos va a dejar todo preparado para su generación.
+- JVM, esta es quizá la más "curiosa" (no compleja) ya que nos permite generar (dependiendo del sistema operativo en el que compilemos), un paquete adecuado para cada plataforma, así pues
+podemos generar paquetes para:
+  - macOS, generamos un fichero .dmg que nos facilitará la tarea de despliegue.
+  - Windows, generamos un fichero .msi.
+  - Linux (Debian), generamos un fichero .deb.

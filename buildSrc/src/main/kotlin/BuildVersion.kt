@@ -3,6 +3,10 @@ import org.gradle.api.JavaVersion
 object BuildVersion {
     object environment {
         val applicationId = "io.github.afalabarce.mvvmkmmtemplate"
+        val appName = "MVVM KMM Template"
+        val appVendor = "Antonio Fdez. Alabarce"
+        val menuCategory = "MVVM KMM"
+        val appDescription = "Template Project to demonstrate KMP capabilities"
         val appVersion = 100
         val appVersionCode = "1.0.0"
         val javaVersion = JavaVersion.VERSION_17

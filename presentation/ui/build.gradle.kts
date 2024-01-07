@@ -94,25 +94,52 @@ android {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "${BuildVersion.environment.applicationId}.MainKt"
+        fromFiles(project.fileTree("libs/") { include("**/*.jar") })
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = BuildVersion.environment.applicationId
+            packageName = BuildVersion.environment.appName
+            description = BuildVersion.environment.appDescription
             packageVersion = BuildVersion.environment.appVersionCode
+            includeAllModules = true
+            javaHome = "/Library/Java/JavaVirtualMachines/jdk-17.0.2.jdk"
+            vendor = BuildVersion.environment.appVendor
+            appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+            windows {
+                iconFile.set(project.file("src/jvmMain/libres/images/ic_launcher_ico.ico"))
+                dirChooser = true
+                //javaHome = "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2022.2.2\\jbr"
+                menuGroup = BuildVersion.environment.menuCategory
+            }
+
+            macOS{
+                packageBuildVersion = BuildVersion.environment.appVersionCode
+                bundleID = "${BuildVersion.environment.applicationId}.MainKt"
+                dockName = BuildVersion.environment.appName
+                javaHome = "/Library/Java/JavaVirtualMachines/jdk-17.0.2.jdk"
+                iconFile.set(project.file("src/iosMain/libres/images/ic_launcher_icns.icns"))
+                mainClass = "${BuildVersion.environment.applicationId}.MainKt"
+                appCategory = "public.app-category.developer-tools"
+            }
         }
     }
 }
 
-compose.experimental {
-    web.application {}
-}
+
+
 
 libres {
     // https://github.com/Skeptick/libres#setup
+    generatedClassName = "MainResources"
+    generateNamedArguments = true
 }
 tasks.getByPath("jvmProcessResources").dependsOn("libresGenerateResources")
 tasks.getByPath("jvmSourcesJar").dependsOn("libresGenerateResources")
+
+task("testClasses").doLast {
+    println("This is a dummy testClasses task")
+}
 
 buildConfig {
     // BuildConfig configuration here.
