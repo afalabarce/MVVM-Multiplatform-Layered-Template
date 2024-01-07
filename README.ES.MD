@@ -395,7 +395,7 @@ de las funcionalidades, así como su uso / despliegue.
 
 Comencemos, a partir de los módulos más internos:
 
-#### models
+#### Models
 
 En este módulo, definiremos las data class necesarias para la gestión correcta tanto de las entidades locales, como remotas.
 A tener en cuenta que, ya que utilizamos SqlDelight como motor de persistencia local, vamos a tener que definir nuestras entidades 
@@ -419,13 +419,13 @@ data class ExampleEntity(
 Como consejo, lo ideal es distribuir los distintos modelos de datos en base a sus feature, organizando en local o remote en función de las 
 necesidades.
 
-#### datasources
+#### Datasources
 
 Esta capa no es más que la definición de las interfaces de comunicación entre la implementación de los repositorios y la propia implementación de 
 estas interfaces o contratos, teniendo en cuenta que los tipos devueltos serán los definidos en el módulo 
 [data -> models]. No tiene necesidad de más explicaciones este módulo.
 
-#### datasources-core
+#### Datasources-core
 
 Esta capa es la que, con diferencia, tiene un mayor nivel de complejidad a nivel de proyecto ya que, entre otras, tiene las implementaciones y definiciones de 
 los distintos orígenes de datos de la app, entre los que destacan (los veremos a continuación en mayor detalle):
@@ -688,7 +688,7 @@ y así sucesivamente.
 
 Para una información completa sobre visitar el sitio relacionado para las [Migraciones en SqlDeLight](https://cashapp.github.io/sqldelight/2.0.0-alpha05/multiplatform_sqlite/migrations/).
 
-#### repository
+#### Repository
 
 En este módulo, definimos tanto los mapeadores (idealmente como funciones de extensión, para no sobrecargar el árbol de dependencias), como las implementaciónes de 
 las interfaces definidas en [domain:repository], es aquí donde, en función de las necesidades, determinaremos el origen de los datos a mostrar (por ejemplo, en base a caducidad de
@@ -699,21 +699,77 @@ caché podemos determinar que al refrescar una lista ha llegado el momento de vo
 ### Capa domain
 
 La capa de dominio, es quizá de las más sencillas, y requiere de una explicación mínima, aunque sí incidiremos en algunas buenas prácticas a tener en cuenta.
+A tener en cuenta que la capa de domain es la única que no tiene dependencias externas, salvo [core:common], debido a que proporciona algunas utilidades.
+
 Veamos cada módulo por separado:
 
-#### models
+#### Models
 
-#### repository
+En este módulo, al igual que en resto, **deberíamos implementar los modelos de datos de dominio en base a feature** de este modo mantendríamos el orden lógico y la comprensión del 
+proyecto por parte de equipos de desarrollo "complejos" será mayor.
 
-#### usecases
+#### Repository
+
+En este módulo definiremos las interfaces / contratos de cada feature que nos van a proporcionar el acceso a los distintos datos, como siempre, organizado por feature.
+
+#### Usecases
+
+Este módulo es el responsable de realizar una separación atómica de las funcionalidades proporcionadas por los repositorios, organizado todo, de nuevo, por features. ¿Qué quiere decir esto?
+Veamos un ejemplo:
+
+Supongamos el siguiente repositorio:
+
+```kotlin
+interface MyCustomRepository {
+    fun getPeople(): Flow<List<Person>>
+    suspend fun insertOrUpdatePeople(vararg people: Person)
+    suspend fun deletePeople(vararg people: Person)
+}
+```
+
+Para realizar la implementación de los casos de uso relativos a este repositorio, deberíamos crear tres ficheros, cada uno para una funcionalidad:
+
+- **GetPeopleUseCase.kt**
+
+```kotlin
+class GetPeopleUseCase (
+    private val repository: MyCustomRepository    
+) {
+    operator fun invoke(): Flow<List<Person>> = repository.getPeople()
+}
+
+```
+
+- **CreateOrUpdatePeopleUseCase.kt**
+
+```kotlin
+class CreateOrUpdatePeopleUseCase (
+    private val repository: MyCustomRepository    
+) {
+  operator fun invoke(vararg people: Person) = repository.insertOrUpdatePeople(people)
+}
+```
+
+- **DeletePeopleUseCase.kt**
+
+```kotlin
+class DeletePeopleUseCase (
+    private val repository: MyCustomRepository    
+) {
+  operator fun invoke(vararg people: Person) = repository.deletePeople(people)
+}
+```
 
 ### Capa presentation
 
 En la capa de presentación es donde va a cobrar sentido todo lo expuesto en las capas anteriores, ya que es en esta capa donde, gracias a los datos proporcionados
 por la capa de dominio, vamos a poder representar la información que el usuario necesite en la UI que le proporcionaremos. Tengamos en cuenta que esta plantilla se 
-basa en un patrón MVVM, por lo que en esta capa definiremos los siguientes módulos, con sus propias particularidades:
+basa en un patrón MVVM, por lo que en esta capa definiremos los siguientes módulos (aunque debido a la arquitectura proporcionada, la migración a un patrón MVI no debeería ser complejo) 
+con sus propias particularidades:
 
 #### ViewModels
+
+
 
 #### UI
 
