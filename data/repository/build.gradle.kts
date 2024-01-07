@@ -77,6 +77,10 @@ libres {
     // https://github.com/Skeptick/libres#setup
 }
 
+task("testClasses").doLast {
+    println("This is a dummy testClasses task")
+}
+
 tasks.getByPath("jvmSourcesJar").dependsOn("libresGenerateResources")
 
 buildConfig {

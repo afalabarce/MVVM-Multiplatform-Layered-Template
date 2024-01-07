@@ -769,7 +769,49 @@ con sus propias particularidades:
 
 #### ViewModels
 
+Este módulo es el nexo de unión entre la capa de dominio y la UI, siendo el responsable de capturar los datos proporcionados por las capas de datos, y solicitar actualizaciones / actuaciones
+en base a peticiones que serán lanzadas gracias a las interacciones del usuario. Esta capa es totalmente independiente de la capa de UI, lo cual es lógico si pretendemos que nuestro proyecto sea
+testeable. Todos nuestros Viewmodels, deberán heredar de [KmmViewModel], que, como vimos en la definición de [core:viewmodels] proporciona una serie de funcionalidades que nos van a facilitar la
+ejecución segura de peticiones a los casos de uso. Recordemos el ejemplo que se indicó en la descripción de [core:viewmodels]:
 
+```kotlin
+class MyViewModel(
+    private val myUseCase: MyUseCase
+): KmmViewModel() {
+    val myUseCaseResult by lazy { myUseCase.flowResult.stateIn(viewModelScope, SharingStarted.Lazily, initialValue) }
+  
+    fun queryResult() {
+        viewModelScope.safeLaunch(
+            onStart = { /* do on start */ },
+            onFinish = { /* do on finish */ },
+            onError = { /* do on raised error */ },
+            onStartContext = Dispatchers.Main,
+            onFinishContext = Dispatchers.Main
+        ) {
+            // Suspend query calls
+        }
+    }
+}
+```
+
+Como podemos ver en la creación de la propiedad de solo lectura myUseCaseResult, generamos un StateFlow, de forma perezosa, y con un valor inicial (recordemos, los Flow, requieren de un valor inicial),
+de este modo, tenemos todo preparado para el pintado de datos reactivo en nuestra UI. Lo más interesante de este ViewModel, es la llamada a la función de extensión safeLaunch, que nos va a permitir de 
+una forma bastante limpia, la ejecución, control de estados en el flujo de tiempo, y por supuesto, el control de errores, de nuestras llamadas a función.
 
 #### UI
+
+Por último, tenemos el módulo con el que el usuario va a interactuar con nuestra aplicación. Si miramos atrás, veremos que todo lo explicado anteriormente confluye para que el desarrollo de la UI quede
+lo más centralizado posible.
+
+A tener en cuenta que, en vista a hacer nuestra aplicación escalable, y sobre todo, **independiente de los cambios futuros en los componentes de compose**, debemos seguir la pauta explicada en [core-ui]
+con respecto a la utilización de Composables genéricos. Como norma, **en este módulo no utilizaremos composables propios de las apis proporcionadas por Google**, si no que utilizaremos parsers propios que serán
+definidos, como ya hemos comentado al comienzo de este README, en el módulo de [core-ui]. Esto tiene una ventaja muy importante, y es que, tanto si deseamos modificar la apariencia, como si lo que vamos a hacer
+adaptar los componentes que ya tenemos desplegados a una hipotética nueva versión de composables, sólo tendríamos que realizar el cambio en un único punto, no viéndose afectado este módulo por esos cambios.
+
+Unas de las pocas diferencias que tenemos en el desarrollo en KMP con Compose Multiplatform con respecto al desarrollo de apps Android son las siguientes:
+
+- No disponemos de ConstraintLayout (aún, 07/01/2024) de forma oficial, en cambio, se agrega la dependencia para una implementación experimental de
+[Samuel Gagarin](https://github.com/Lavmee/constraintlayout-compose-multiplatform) que nos provee de ConstraintLayout.
+- Puesto que no tenemos ViewModels como tal, y nuestra implementación de viewmodels es a partir del desarrollo de [MokoMVVM](https://github.com/icerockdev/moko-mvvm), para inyectar
+los viewmodels en nuestros composables, utilizaremos koinInject y no koinViewModel, tal y como hacíamos en Android.
 

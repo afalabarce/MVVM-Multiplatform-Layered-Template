@@ -25,6 +25,7 @@ ktorVersion = "2.3.6"
 ktorfit-version = "1.11.0"
 koin-compose-version = "1.1.0"
 datastore-version = "1.1.0-alpha07"
+constraint-layout-version = "0.2.3"
 
 [libraries]
 androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -65,6 +66,7 @@ sqlDelight-driver-native = { module = "app.cash.sqldelight:native-driver", versi
 sqlDelight-driver-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 jetpack-datastore = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastore-version"}
+constraint-layout = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraint-layout-version"}
 [bundles]
 
 layer-core-common = [
@@ -97,7 +99,8 @@ layer-core-ui = [
     "kotlinx-datetime",
     "multiplatformSettings",
     "koin-core",
-    "koin-compose"
+    "koin-compose",
+    "constraint-layout"
 ]
 
 layer-data-datasources-core = [
@@ -114,7 +117,8 @@ layer-data-datasources-core = [
     "ktor-client-serialization",
     "ktor-serialization-kotlinx-json",
     "ktorfit-lib",
-    "jetpack-datastore"
+    "jetpack-datastore",
+    "sqlDelight-driver-coroutines-extensions"
 ]
 
 android-core = [
