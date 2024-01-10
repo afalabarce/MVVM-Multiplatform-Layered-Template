@@ -104,46 +104,11 @@ abstract class ProjectDeployTask: DefaultTask() {
         Files.walkFileTree(File(projectPath).toPath(),
             object : SimpleFileVisitor<Path>() {
                 @Throws(IOException::class)
-                override fun preVisitDirectory(
-                    folder: Path,
-                    attrs: BasicFileAttributes
-                ): FileVisitResult {
-                    if (
-                        folder.toFile().isDirectory &&
-                        folder.toFile().absolutePath.endsWith(_sourcePackage)
-                    ) {
-                        out.withStyle(StyledTextOutput.Style.Normal).text("· Relocate source package folder $sourcePackageFolder to deploy package folder $deployPackageFolder...")
-
-                        try {
-                            val destinationPath = File(
-                                folder
-                                    .toFile()
-                                    .absolutePath
-                                    .replace(
-                                        oldValue = sourcePackageFolder,
-                                        newValue = deployPackageFolder
-                                    )
-                            ).toPath()
-
-                            folder.moveTo(
-                                target = destinationPath,
-                                overwrite = true
-                            )
-                            out.withStyle(StyledTextOutput.Style.Success).println(" [SUCCESS]")
-                        }catch (_: Exception){
-                            out.withStyle(StyledTextOutput.Style.Failure).println(" [ERROR]")
-                        }
-                    }
-
-
-                    return FileVisitResult.CONTINUE
-                }
-
-                @Throws(IOException::class)
                 override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
                     if (
                         file.isRegularFile() &&
-                        file.extension in arrayOf("kt", "xml", "kts")
+                        file.extension in arrayOf("kt", "xml", "kts") &&
+                        !file.name.contains("ProjectDeployTask")
                     ) {
                         out.withStyle(StyledTextOutput.Style.Normal).text("· [${file.name}] Modifying source package $_sourcePackage to deploy package $_deployPackage...")
                         if (file.toFile().absolutePath.contains(
@@ -176,24 +141,40 @@ abstract class ProjectDeployTask: DefaultTask() {
         val out: StyledTextOutput = services.get(StyledTextOutputFactory::class.java).create("formattedOutput")
         val sourcePackageFolder = _sourcePackage.replace(".", File.separator)
         val deployPackageFolder = _deployPackage.replace(".", File.separator)
+
         Files.walkFileTree(File(projectPath).toPath(),
             object : SimpleFileVisitor<Path>() {
                 @Throws(IOException::class)
-                override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                override fun preVisitDirectory(
+                    folder: Path,
+                    attrs: BasicFileAttributes
+                ): FileVisitResult {
                     if (
-                        file.toFile().isDirectory &&
-                        file.toFile().absolutePath.endsWith(_sourcePackage)
+                        folder.toFile().isDirectory &&
+                        !folder.toFile().absolutePath.contains("build") &&
+                        folder.toFile().absolutePath.endsWith(sourcePackageFolder)
                     ) {
-                        out.withStyle(StyledTextOutput.Style.Normal).text("· Relocate source package folder $sourcePackageFolder to deploy package folder $deployPackageFolder...")
+                        val destinationPath = File(
+                            folder
+                                .toFile()
+                                .absolutePath
+                                .replace(
+                                    oldValue = sourcePackageFolder,
+                                    newValue = deployPackageFolder
+                                )
+                        ).toPath()
+
+                        out.withStyle(StyledTextOutput.Style.Normal).text("· Relocate source package folder:" +
+                                "\n\t\t- from: ${folder.toFile().absolutePath}" +
+                                "\n\t\t- to: ${destinationPath.toFile().absolutePath}...")
 
                         try {
-                            val content = file.toFile().readText(charset = Charsets.UTF_8)
-                            if (content.contains(_sourcePackage)){
-                                file.toFile().writeText(content.replace(_sourcePackage, _deployPackage))
-                                out.withStyle(StyledTextOutput.Style.Success).println(" [SUCCESS]")
-                            } else {
-                                out.withStyle(StyledTextOutput.Style.Info).println(" <SKIPPED>")
-                            }
+                            folder.moveTo(
+                                target = destinationPath,
+                                overwrite = true
+                            )
+
+                            out.withStyle(StyledTextOutput.Style.Success).println(" [SUCCESS]")
                         }catch (_: Exception){
                             out.withStyle(StyledTextOutput.Style.Failure).println(" [ERROR]")
                         }
@@ -210,8 +191,8 @@ abstract class ProjectDeployTask: DefaultTask() {
         check(validate())
         val projectPath = projectDir.get()
 
-        relocatePackageFolders(projectPath)
         changePackage(projectPath)
+        relocatePackageFolders(projectPath)
     }
 
     companion object {
@@ -220,8 +201,4 @@ abstract class ProjectDeployTask: DefaultTask() {
         private const val DEPLOY_PACKAGE_DESCRIPTION =
             "Deploy package for the template, can't be empty, and not equals to sourcePackage"
     }
-}
-
-interface Injected {
-    @get:Inject val fs: FileSystemOperations
 }
