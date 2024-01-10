@@ -831,3 +831,20 @@ podemos generar paquetes para:
 Para realizar el despliegue (generar los instaladores para las plataformas de escritorio), tan solo debemos movernos al árbol de tareas de gradle y, 
 en la lista de tareas de proyecto, fijarnos en la que nos indica [compose desktop], en ella veremos disponibles las distintas tareas 
 **packageRelease[Deb|Msi|Dmg]**
+
+Además se ha agregado una tarea gradle llamada deployKmmProject que nos permite, de una forma extremadamente simple, modificar el package,
+applicationId, estructura de directorios, etc automaticamente. Para ello, basta con ejecutar el siguiente comando desde consola, para obtener
+una ayuda sobre su uso:
+
+```bash
+# ./gradlew -q deployKmmProject 
+Project Deploy Task Help
+-------------------------------
+This task can relocate packages and folders from source package to destination deploy package
+- sourcePackage, Source package from template, by default io.github.afalabarce.mvvmkmmtemplate
+- deployPackage, Deploy package for the template, can't be empty, and not equals to sourcePackage
+
+Usage:
+./gradlew -q deployKmmProject --sourcePackage="io.github.afalabarce.mvvmkmmtemplate" --deployPackage="io.github.afalabarce.awesomeapp"
+
+```

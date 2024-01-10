@@ -831,3 +831,20 @@ relatively simple. So, we have the following deployment configurations, per plat
 To perform the deployment (generate the installers for the desktop platforms), we just have to move to the gradle task tree and,
 In the list of project tasks, look at the one that indicates [compose desktop], in it we will see the different tasks available
 **packageRelease[Deb|Msi|Dmg]**
+
+In addition, a gradle task called deployKmmProject has been added that allows us, in an extremely simple way, to modify the package,
+applicationId, directory structure, etc. automatically. To do this, just run the following command from the console to obtain
+some help on its use:
+
+```bash
+# ./gradlew -q deployKmmProject 
+Project Deploy Task Help
+-------------------------------
+This task can relocate packages and folders from source package to destination deploy package
+- sourcePackage, Source package from template, by default io.github.afalabarce.mvvmkmmtemplate
+- deployPackage, Deploy package for the template, can't be empty, and not equals to sourcePackage
+
+Usage:
+./gradlew -q deployKmmProject --sourcePackage="io.github.afalabarce.mvvmkmmtemplate" --deployPackage="io.github.afalabarce.awesomeapp"
+
+```
