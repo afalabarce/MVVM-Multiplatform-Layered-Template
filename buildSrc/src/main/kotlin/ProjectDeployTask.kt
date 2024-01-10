@@ -10,6 +10,7 @@ import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.gradle.kotlin.dsl.newInstance
 import java.io.File
 import java.io.IOException
+import java.nio.file.CopyOption
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
@@ -137,11 +138,32 @@ abstract class ProjectDeployTask: DefaultTask() {
         )
     }
 
+    private fun recurseFolders(currentPath: File): List<File> {
+        val files = currentPath.listFiles()?.filter { x -> x.isDirectory } ?: emptyList()
+
+        if (files.isNotEmpty()){
+            return files.union(files.map { xDir -> recurseFolders(xDir) }.flatten()).toList()
+        }
+
+        return emptyList()
+    }
+
     private fun relocatePackageFolders(projectPath: String){
         val out: StyledTextOutput = services.get(StyledTextOutputFactory::class.java).create("formattedOutput")
         val sourcePackageFolder = _sourcePackage.replace(".", File.separator)
         val deployPackageFolder = _deployPackage.replace(".", File.separator)
 
+        val folders = recurseFolders(File(projectPath))
+            .filter { x ->
+                !x.absolutePath.contains("build") &&
+                !x.absolutePath.contains(".idea") &&
+                !x.absolutePath.contains(".git") &&
+                !x.absolutePath.contains(".gradle") &&
+                !x.absolutePath.contains(".run") &&
+                x.absolutePath.endsWith(sourcePackageFolder)
+            }.distinct()
+
+        /*
         Files.walkFileTree(File(projectPath).toPath(),
             object : SimpleFileVisitor<Path>() {
                 @Throws(IOException::class)
@@ -150,32 +172,36 @@ abstract class ProjectDeployTask: DefaultTask() {
                     attrs: BasicFileAttributes
                 ): FileVisitResult {
                     if (
+                        folder.toFile().exists() &&
                         folder.toFile().isDirectory &&
                         !folder.toFile().absolutePath.contains("build") &&
                         folder.toFile().absolutePath.endsWith(sourcePackageFolder)
                     ) {
-                        val destinationPath = File(
-                            folder
-                                .toFile()
-                                .absolutePath
-                                .replace(
-                                    oldValue = sourcePackageFolder,
-                                    newValue = deployPackageFolder
-                                )
-                        ).toPath()
-
-                        out.withStyle(StyledTextOutput.Style.Normal).text("· Relocate source package folder:" +
-                                "\n\t\t- from: ${folder.toFile().absolutePath}" +
-                                "\n\t\t- to: ${destinationPath.toFile().absolutePath}...")
-
                         try {
+                            val destinationPath = File(
+                                folder
+                                    .toFile()
+                                    .absolutePath
+                                    .replace(
+                                        oldValue = sourcePackageFolder,
+                                        newValue = deployPackageFolder
+                                    )
+                            ).toPath()
+
+                            out.withStyle(StyledTextOutput.Style.Normal).text(
+                                "· Relocate source package folder:" +
+                                        "\n\t\t- from: ${folder.toFile().absolutePath}" +
+                                        "\n\t\t- to: ${destinationPath.toFile().absolutePath}..."
+                            )
+
+
                             folder.moveTo(
                                 target = destinationPath,
                                 overwrite = true
                             )
 
                             out.withStyle(StyledTextOutput.Style.Success).println(" [SUCCESS]")
-                        }catch (_: Exception){
+                        } catch (_: Exception) {
                             out.withStyle(StyledTextOutput.Style.Failure).println(" [ERROR]")
                         }
                     }
@@ -184,6 +210,28 @@ abstract class ProjectDeployTask: DefaultTask() {
                 }
             }
         )
+
+         */
+        folders.forEach { sourceFolder ->
+            val deployFolder = File(sourceFolder.absolutePath.replace(sourcePackageFolder, deployPackageFolder))
+
+            out.withStyle(StyledTextOutput.Style.Normal).text(
+                "· Relocate source package folder:" +
+                        "\n\t\t- from: ${sourceFolder.absolutePath}" +
+                        "\n\t\t- to: ${deployFolder.absolutePath}..."
+            )
+            try{
+                sourceFolder.toPath().moveTo(
+                    target = deployFolder.toPath(),
+                    overwrite = true
+                )
+
+                out.withStyle(StyledTextOutput.Style.Success).println(" [SUCCESS]")
+            } catch (_: Exception){
+                out.withStyle(StyledTextOutput.Style.Failure).println(" [ERROR]")
+            }
+        }
+
     }
 
     @TaskAction
@@ -191,7 +239,7 @@ abstract class ProjectDeployTask: DefaultTask() {
         check(validate())
         val projectPath = projectDir.get()
 
-        changePackage(projectPath)
+        //changePackage(projectPath)
         relocatePackageFolders(projectPath)
     }
 
