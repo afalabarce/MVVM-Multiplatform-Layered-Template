@@ -128,7 +128,6 @@ abstract class ProjectDeployTask: DefaultTask() {
                                 out.withStyle(StyledTextOutput.Style.Failure).println(" [ERROR]")
                             }
                         }
-
                     }
 
                     return FileVisitResult.CONTINUE
