@@ -18,6 +18,7 @@ import java.nio.file.attribute.BasicFileAttributes
 import javax.inject.Inject
 import kotlin.io.path.extension
 import kotlin.io.path.isRegularFile
+import kotlin.io.path.moveTo
 import kotlin.io.path.name
 
 abstract class ProjectDeployTask: DefaultTask() {
@@ -95,14 +96,49 @@ abstract class ProjectDeployTask: DefaultTask() {
 
     //endregion
 
-    @TaskAction
-    fun deployKmmProject() {
-        check(validate())
-        val projectPath = projectDir.get()
+    private fun changePackage(projectPath: String){
         val out: StyledTextOutput = services.get(StyledTextOutputFactory::class.java).create("formattedOutput")
+        val sourcePackageFolder = _sourcePackage.replace(".", File.separator)
+        val deployPackageFolder = _deployPackage.replace(".", File.separator)
 
         Files.walkFileTree(File(projectPath).toPath(),
             object : SimpleFileVisitor<Path>() {
+                @Throws(IOException::class)
+                override fun preVisitDirectory(
+                    folder: Path,
+                    attrs: BasicFileAttributes
+                ): FileVisitResult {
+                    if (
+                        folder.toFile().isDirectory &&
+                        folder.toFile().absolutePath.endsWith(_sourcePackage)
+                    ) {
+                        out.withStyle(StyledTextOutput.Style.Normal).text("· Relocate source package folder $sourcePackageFolder to deploy package folder $deployPackageFolder...")
+
+                        try {
+                            val destinationPath = File(
+                                folder
+                                    .toFile()
+                                    .absolutePath
+                                    .replace(
+                                        oldValue = sourcePackageFolder,
+                                        newValue = deployPackageFolder
+                                    )
+                            ).toPath()
+
+                            folder.moveTo(
+                                target = destinationPath,
+                                overwrite = true
+                            )
+                            out.withStyle(StyledTextOutput.Style.Success).println(" [SUCCESS]")
+                        }catch (_: Exception){
+                            out.withStyle(StyledTextOutput.Style.Failure).println(" [ERROR]")
+                        }
+                    }
+
+
+                    return FileVisitResult.CONTINUE
+                }
+
                 @Throws(IOException::class)
                 override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
                     if (
@@ -134,6 +170,48 @@ abstract class ProjectDeployTask: DefaultTask() {
                 }
             }
         )
+    }
+
+    private fun relocatePackageFolders(projectPath: String){
+        val out: StyledTextOutput = services.get(StyledTextOutputFactory::class.java).create("formattedOutput")
+        val sourcePackageFolder = _sourcePackage.replace(".", File.separator)
+        val deployPackageFolder = _deployPackage.replace(".", File.separator)
+        Files.walkFileTree(File(projectPath).toPath(),
+            object : SimpleFileVisitor<Path>() {
+                @Throws(IOException::class)
+                override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                    if (
+                        file.toFile().isDirectory &&
+                        file.toFile().absolutePath.endsWith(_sourcePackage)
+                    ) {
+                        out.withStyle(StyledTextOutput.Style.Normal).text("· Relocate source package folder $sourcePackageFolder to deploy package folder $deployPackageFolder...")
+
+                        try {
+                            val content = file.toFile().readText(charset = Charsets.UTF_8)
+                            if (content.contains(_sourcePackage)){
+                                file.toFile().writeText(content.replace(_sourcePackage, _deployPackage))
+                                out.withStyle(StyledTextOutput.Style.Success).println(" [SUCCESS]")
+                            } else {
+                                out.withStyle(StyledTextOutput.Style.Info).println(" <SKIPPED>")
+                            }
+                        }catch (_: Exception){
+                            out.withStyle(StyledTextOutput.Style.Failure).println(" [ERROR]")
+                        }
+                    }
+
+                    return FileVisitResult.CONTINUE
+                }
+            }
+        )
+    }
+
+    @TaskAction
+    fun deployKmmProject() {
+        check(validate())
+        val projectPath = projectDir.get()
+
+        relocatePackageFolders(projectPath)
+        changePackage(projectPath)
     }
 
     companion object {
