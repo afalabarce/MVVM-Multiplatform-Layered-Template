@@ -239,8 +239,8 @@ abstract class ProjectDeployTask: DefaultTask() {
         check(validate())
         val projectPath = projectDir.get()
 
-        //changePackage(projectPath)
         relocatePackageFolders(projectPath)
+        changePackage(projectPath)
     }
 
     companion object {
