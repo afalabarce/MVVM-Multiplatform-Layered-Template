@@ -8,3 +8,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization).apply(false)
     alias(libs.plugins.sqlDelight).apply(false)
 }
+
+tasks.register<ProjectDeployTask>("deployKmmProject"){
+    projectDir = project.rootDir.absolutePath
+}
